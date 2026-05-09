@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "659512196164",
+    "project_id": "vihtal-companion",
+    "storage_bucket": "vihtal-companion.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:659512196164:android:18ecb257e18a0f555fd011",
+        "android_client_info": {
+          "package_name": "space.vihtal.vihtal_companion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzcSbqM6vJzHqOCQKlIXUS7V9caSq4G0A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
