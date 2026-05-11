@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../services/user_profile_service.dart';
@@ -19,6 +22,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   bool _loading = true;
   bool _saving = false;
+  bool _uploadingPhoto = false;
+
+  String? _photoUrl;
+  Uint8List? _localPhotoBytes;
 
   @override
   void initState() {
@@ -36,6 +43,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       final profile = await _profileService.getCurrentUserProfile();
       if (!mounted) return;
 
+      _photoUrl = profile.photoUrl;
+
       // Si en Firestore no hay first/last, intenta derivarlo del displayName.
       final derived = profile.displayName.trim().split(RegExp(r'\s+'));
       final derivedFirst = derived.isNotEmpty ? derived.first : '';
@@ -52,6 +61,65 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     } finally {
       if (!mounted) return;
       setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _pickAndUploadPhoto() async {
+    if (_uploadingPhoto) return;
+
+    setState(() => _uploadingPhoto = true);
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+        withData: true,
+      );
+
+      if (result == null || result.files.isEmpty) {
+        return;
+      }
+
+      final file = result.files.single;
+      final bytes = file.bytes;
+      if (bytes == null) {
+        throw StateError('No se pudo leer el archivo seleccionado');
+      }
+
+      // Preview inmediato
+      setState(() {
+        _localPhotoBytes = bytes;
+      });
+
+      final extension = (file.extension ?? '').toLowerCase();
+      final contentType = switch (extension) {
+        'png' => 'image/png',
+        'jpg' || 'jpeg' => 'image/jpeg',
+        'webp' => 'image/webp',
+        'gif' => 'image/gif',
+        _ => 'application/octet-stream',
+      };
+
+      final url = await _profileService.uploadProfilePhoto(
+        bytes: bytes,
+        contentType: contentType,
+      );
+
+      if (!mounted) return;
+      setState(() {
+        _photoUrl = url;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Foto de perfil actualizada')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No se pudo actualizar la foto: $e')),
+      );
+    } finally {
+      if (!mounted) return;
+      setState(() => _uploadingPhoto = false);
     }
   }
 
@@ -213,17 +281,51 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(10),
-                                    child: Container(
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Color(0xFFEAB7AE),
-                                      ),
-                                      child: const Center(
-                                        child: Icon(
-                                          Icons.person_rounded,
-                                          size: 64,
-                                          color: AppColors.accent,
-                                        ),
+                                    child: ClipOval(
+                                      child: Stack(
+                                        fit: StackFit.expand,
+                                        children: [
+                                          if (_localPhotoBytes != null)
+                                            Image.memory(
+                                              _localPhotoBytes!,
+                                              fit: BoxFit.cover,
+                                            )
+                                          else if (_photoUrl != null && _photoUrl!.isNotEmpty)
+                                            Image.network(
+                                              _photoUrl!,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (_, __, ___) {
+                                                return const ColoredBox(
+                                                  color: Color(0xFFEAB7AE),
+                                                  child: Center(
+                                                    child: Icon(
+                                                      Icons.person_rounded,
+                                                      size: 64,
+                                                      color: AppColors.accent,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            )
+                                          else
+                                            const ColoredBox(
+                                              color: Color(0xFFEAB7AE),
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons.person_rounded,
+                                                  size: 64,
+                                                  color: AppColors.accent,
+                                                ),
+                                              ),
+                                            ),
+                                          if (_uploadingPhoto)
+                                            ColoredBox(
+                                              color: Colors.black.withValues(alpha: 0.25),
+                                              child: const Center(
+                                                child: CircularProgressIndicator(color: Colors.white),
+                                              ),
+                                            ),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -232,9 +334,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   right: -2,
                                   bottom: -2,
                                   child: GestureDetector(
-                                    onTap: () {
-                                      // TODO: web file picker + subida a Storage y user.updatePhotoURL.
-                                    },
+                                    onTap: _pickAndUploadPhoto,
                                     child: Container(
                                       width: 54,
                                       height: 54,
