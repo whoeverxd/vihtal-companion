@@ -67,7 +67,7 @@ class DonateScreen extends StatelessWidget {
                       letterSpacing: -0.4,
                     ),
                   ),
-          
+
 
                   const SizedBox(height: 18),
                   const Text(
