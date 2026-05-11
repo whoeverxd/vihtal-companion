@@ -3,6 +3,11 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
+
+// Import condicional para web (Blob)
+import 'user_profile_service_web_stub.dart'
+    if (dart.library.html) 'user_profile_service_web.dart';
 
 class UserProfileData {
   const UserProfileData({
@@ -76,12 +81,45 @@ class UserProfileService {
 
     final ref = _storage.ref().child('users/${user.uid}/profile.jpg');
 
+    debugPrint('[Storage] bucket=${_storage.app.options.storageBucket} path=${ref.fullPath} uid=${user.uid}');
+
     final metadata = SettableMetadata(
       contentType: contentType,
       cacheControl: 'public,max-age=3600',
     );
 
-    await ref.putData(bytes, metadata);
+    UploadTask task;
+    if (kIsWeb) {
+      final blob = bytesToBlob(bytes, contentType);
+      task = ref.putBlob(blob, metadata);
+    } else {
+      task = ref.putData(bytes, metadata);
+    }
+
+    // Si el upload se queda en 0% mucho tiempo suele ser por reglas/permiso/CORS.
+    // Esperamos el primer snapshot para detectar errores temprano.
+    final firstSnapshot = task.snapshotEvents.first.timeout(const Duration(seconds: 8),
+        onTimeout: () {
+      throw TimeoutException(
+        'No llegó ningún evento de subida. Revisa reglas de Storage, auth y red (localhost).',
+      );
+    });
+
+    await firstSnapshot;
+
+    task.snapshotEvents.listen(
+      (s) {
+        final total = s.totalBytes;
+        final transferred = s.bytesTransferred;
+        final pct = total == 0 ? 0 : ((transferred / total) * 100).round();
+        debugPrint('[Storage] profile upload state=${s.state} $transferred/$total (${pct}%)');
+      },
+      onError: (e) {
+        debugPrint('[Storage] profile upload snapshotEvents error: $e');
+      },
+    );
+
+    await task;
     final url = await ref.getDownloadURL();
 
     // Persistimos la URL sin tocar nombre/apellido.

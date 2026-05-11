@@ -67,8 +67,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<void> _pickAndUploadPhoto() async {
     if (_uploadingPhoto) return;
 
+    final started = DateTime.now();
+    debugPrint('[EditProfile] pick photo: start');
+
     setState(() => _uploadingPhoto = true);
     try {
+      debugPrint('[EditProfile] pick photo: opening file picker');
       final result = await FilePicker.platform.pickFiles(
         type: FileType.image,
         allowMultiple: false,
@@ -76,14 +80,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       );
 
       if (result == null || result.files.isEmpty) {
+        debugPrint('[EditProfile] pick photo: cancelled/empty result');
         return;
       }
 
       final file = result.files.single;
+      debugPrint(
+        '[EditProfile] pick photo: selected name=${file.name} ext=${file.extension} size=${file.size}',
+      );
+
       final bytes = file.bytes;
       if (bytes == null) {
+        debugPrint('[EditProfile] pick photo: bytes == null');
         throw StateError('No se pudo leer el archivo seleccionado');
       }
+      debugPrint('[EditProfile] pick photo: bytes length=${bytes.length}');
 
       // Preview inmediato
       setState(() {
@@ -98,26 +109,38 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         'gif' => 'image/gif',
         _ => 'application/octet-stream',
       };
+      debugPrint('[EditProfile] pick photo: contentType=$contentType');
 
-      final url = await _profileService.uploadProfilePhoto(
-        bytes: bytes,
-        contentType: contentType,
-      );
+      debugPrint('[EditProfile] upload: start');
+      final url = await _profileService
+          .uploadProfilePhoto(
+            bytes: bytes,
+            contentType: contentType,
+          )
+          .timeout(const Duration(seconds: 60));
+
+      debugPrint('[EditProfile] upload: done url=$url');
 
       if (!mounted) return;
       setState(() {
         _photoUrl = url;
+        // Ya podemos liberar preview local (opcional)
+        // _localPhotoBytes = null;
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Foto de perfil actualizada')),
       );
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('[EditProfile] upload error: $e');
+      debugPrintStack(stackTrace: st);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('No se pudo actualizar la foto: $e')),
       );
     } finally {
+      final elapsed = DateTime.now().difference(started);
+      debugPrint('[EditProfile] pick/upload: finally after ${elapsed.inMilliseconds}ms');
       if (!mounted) return;
       setState(() => _uploadingPhoto = false);
     }
