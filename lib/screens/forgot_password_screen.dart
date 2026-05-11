@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../router/app_router.dart';
 import '../theme.dart';
+import '../widgets/brand_logo.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -37,7 +38,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     messenger.clearSnackBars();
     messenger.showSnackBar(
       const SnackBar(
-        content: Text('Envío de instrucciones pendiente de conectar a Firebase.'),
+        content: Text(
+          'Envío de instrucciones pendiente de conectar a Firebase.',
+        ),
       ),
     );
   }
@@ -52,14 +55,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         child: SingleChildScrollView(
           padding: EdgeInsets.only(bottom: 24 + media.viewInsets.bottom),
           child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: media.size.height - media.padding.vertical),
+            constraints: BoxConstraints(
+              minHeight: media.size.height - media.padding.vertical,
+            ),
             child: IntrinsicHeight(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Header
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                     child: Row(
                       children: [
                         InkWell(
@@ -72,28 +80,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               color: AppColors.primary.withValues(alpha: 0.10),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.arrow_back, color: AppColors.primary),
+                            child: const Icon(
+                              Icons.arrow_back,
+                              color: AppColors.primary,
+                            ),
                           ),
                         ),
                         const Spacer(),
                         Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                color: AppColors.primary,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Icon(Icons.health_and_safety, color: Colors.white, size: 18),
-                            ),
-                            const SizedBox(width: 10),
-                            const Text(
-                              'VIHTAL',
-                              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, letterSpacing: -0.2),
-                            ),
-                          ],
+                          children: const [BrandLogo(width: 118)],
                         ),
                         const Spacer(),
                         const SizedBox(width: 48, height: 48),
@@ -136,7 +132,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               color: AppColors.primary.withValues(alpha: 0.07),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.lock_reset, color: AppColors.primary, size: 44),
+                            child: const Icon(
+                              Icons.lock_reset,
+                              color: AppColors.primary,
+                              size: 44,
+                            ),
                           ),
                         ),
 
@@ -144,7 +144,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                         const Text(
                           'Correo electrónico',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         const SizedBox(height: 12),
                         Form(
@@ -157,35 +160,58 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             validator: (value) {
                               final v = (value ?? '').trim();
                               if (v.isEmpty) return 'Introduce tu correo.';
-                              final ok = RegExp(r'^[^@]+@[^@]+\\.[^@]+$').hasMatch(v);
+                              final ok = RegExp(
+                                r'^[^@]+@[^@]+\\.[^@]+$',
+                              ).hasMatch(v);
                               if (!ok) return 'Correo inválido.';
                               return null;
                             },
                             decoration: InputDecoration(
                               hintText: 'ejemplo@correo.com',
-                              prefixIcon: Icon(Icons.mail, color: Colors.white.withValues(alpha: 0.45)),
+                              prefixIcon: Icon(
+                                Icons.mail,
+                                color: Colors.white.withValues(alpha: 0.45),
+                              ),
                               filled: true,
                               fillColor: Colors.white.withValues(alpha: 0.03),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 18,
+                                vertical: 18,
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(28),
-                                borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.25)),
+                                borderSide: BorderSide(
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.25,
+                                  ),
+                                ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(28),
-                                borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.25)),
+                                borderSide: BorderSide(
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.25,
+                                  ),
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(28),
-                                borderSide: const BorderSide(color: AppColors.primary, width: 1.4),
+                                borderSide: const BorderSide(
+                                  color: AppColors.primary,
+                                  width: 1.4,
+                                ),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(28),
-                                borderSide: const BorderSide(color: Colors.redAccent),
+                                borderSide: const BorderSide(
+                                  color: Colors.redAccent,
+                                ),
                               ),
                               focusedErrorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(28),
-                                borderSide: const BorderSide(color: Colors.redAccent),
+                                borderSide: const BorderSide(
+                                  color: Colors.redAccent,
+                                ),
                               ),
                             ),
                           ),
@@ -201,13 +227,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary,
                               foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(34)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(34),
+                              ),
                               elevation: 10,
-                              shadowColor: AppColors.primary.withValues(alpha: 0.35),
+                              shadowColor: AppColors.primary.withValues(
+                                alpha: 0.35,
+                              ),
                             ),
                             child: const Text(
                               'Enviar Instrucciones',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 0.2),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 0.2,
+                              ),
                             ),
                           ),
                         ),
@@ -219,12 +253,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                   // Bottom link
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 24,
+                    ),
                     child: TextButton(
                       onPressed: () => context.go(AppRoutes.login),
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.primary,
-                        textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,

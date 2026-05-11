@@ -1,22 +1,30 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../screens/home_screen.dart';
+import '../screens/ai_screen.dart';
+import '../screens/health_screen.dart';
 import '../screens/login_screen.dart';
 import '../screens/register_screen.dart';
+import '../screens/profile_screen.dart';
 import '../screens/splash_screen.dart';
 import '../screens/forgot_password_screen.dart';
 import '../screens/support_screen.dart';
 import '../screens/donate_screen.dart';
 import '../services/auth_service.dart';
+import '../theme.dart';
+import '../widgets/vihtal_bottom_navigation_bar.dart';
 
 class AppRoutes {
   static const String splash = '/';
   static const String login = '/login';
   static const String register = '/register';
   static const String home = '/home';
+  static const String ai = '/ai';
+  static const String health = '/health';
+  static const String profile = '/profile';
   static const String forgotPassword = '/forgot-password';
   static const String support = '/support';
   static const String donate = '/donate';
@@ -39,6 +47,28 @@ class AuthStateNotifier extends ChangeNotifier {
 GoRouter createAppRouter(AuthService authService) {
   final authNotifier = AuthStateNotifier(authService.authStateChanges());
 
+  int indexFromLocation(String location) {
+    if (location == AppRoutes.ai) return 1;
+    if (location == AppRoutes.health) return 2;
+    if (location == AppRoutes.profile) return 3;
+    return 0;
+  }
+
+  String routeFromIndex(int index) {
+    switch (index) {
+      case 0:
+        return AppRoutes.home;
+      case 1:
+        return AppRoutes.ai;
+      case 2:
+        return AppRoutes.health;
+      case 3:
+        return AppRoutes.profile;
+      default:
+        return AppRoutes.home;
+    }
+  }
+
   return GoRouter(
     initialLocation: AppRoutes.splash,
     refreshListenable: authNotifier,
@@ -52,8 +82,13 @@ GoRouter createAppRouter(AuthService authService) {
       final isGoingToLogin = location == AppRoutes.login;
       final isGoingToRegister = location == AppRoutes.register;
       final isGoingToSplash = location == AppRoutes.splash;
+      final isProtectedTab =
+          location == AppRoutes.home ||
+          location == AppRoutes.ai ||
+          location == AppRoutes.health ||
+          location == AppRoutes.profile;
 
-      if (user == null && location == AppRoutes.home) {
+      if (user == null && isProtectedTab) {
         return AppRoutes.login;
       }
 
@@ -76,9 +111,36 @@ GoRouter createAppRouter(AuthService authService) {
         path: AppRoutes.register,
         builder: (BuildContext context, GoRouterState state) => RegisterScreen(authService: authService),
       ),
-      GoRoute(
-        path: AppRoutes.home,
-        builder: (BuildContext context, GoRouterState state) => HomeScreen(authService: authService),
+      ShellRoute(
+        builder: (BuildContext context, GoRouterState state, Widget child) {
+          final currentIndex = indexFromLocation(state.matchedLocation);
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            body: SafeArea(child: child),
+            bottomNavigationBar: VihtalBottomNavigationBar(
+              currentIndex: currentIndex,
+              onTap: (index) => context.go(routeFromIndex(index)),
+            ),
+          );
+        },
+        routes: <RouteBase>[
+          GoRoute(
+            path: AppRoutes.home,
+            builder: (BuildContext context, GoRouterState state) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.ai,
+            builder: (BuildContext context, GoRouterState state) => const AiScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.health,
+            builder: (BuildContext context, GoRouterState state) => const HealthScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.profile,
+            builder: (BuildContext context, GoRouterState state) => const ProfileScreen(),
+          ),
+        ],
       ),
       GoRoute(
         path: AppRoutes.forgotPassword,

@@ -8,22 +8,22 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vihtal_companion/main.dart';
+import 'package:vihtal_companion/widgets/brand_logo.dart';
 
 void main() {
-  testWidgets('App arranca en Splash y navega a Login', (WidgetTester tester) async {
+  testWidgets('App arranca en Splash y navega a Login', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MyApp());
     await tester.pumpAndSettle();
-
-    // Splash
-    expect(find.text('VIHTAL'), findsOneWidget);
-    expect(find.text('Companion'), findsOneWidget);
-    expect(find.text('Seguro y Privado'), findsOneWidget);
+    expect(find.byType(BrandLogo), findsOneWidget);
+    expect(find.text('EMPEZAR'), findsOneWidget);
 
     // Navegar a login
-    await tester.tap(find.text('Seguro y Privado'));
+    await tester.tap(find.text('EMPEZAR'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Iniciar Sesión'), findsOneWidget);
-    expect(find.text('Acceder'), findsOneWidget);
+    expect(find.text('Bienvenido de nuevo'), findsOneWidget);
+    expect(find.text('Iniciar sesión'), findsOneWidget);
   });
 }

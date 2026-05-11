@@ -32,11 +32,16 @@ class DonateScreen extends StatelessWidget {
                 children: [
                   // Header / Top Bar
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.background.withValues(alpha: 0.85),
                       border: Border(
-                        bottom: BorderSide(color: AppColors.primary.withValues(alpha: 0.20)),
+                        bottom: BorderSide(
+                          color: AppColors.primary.withValues(alpha: 0.20),
+                        ),
                       ),
                     ),
                     child: Row(
@@ -51,14 +56,21 @@ class DonateScreen extends StatelessWidget {
                               color: AppColors.primary.withValues(alpha: 0.10),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.arrow_back, color: Colors.white),
+                            child: const Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                         const Expanded(
                           child: Text(
                             'Apoya a VIHTAL',
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: -0.2),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -0.2,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 44, height: 44),
@@ -75,11 +87,13 @@ class DonateScreen extends StatelessWidget {
                       height: 210,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: AppColors.primary.withValues(alpha: 0.20)),
+                        border: Border.all(
+                          color: AppColors.primary.withValues(alpha: 0.20),
+                        ),
                         color: AppColors.primary.withValues(alpha: 0.10),
                         image: const DecorationImage(
                           image: NetworkImage(
-                            'https://lh3.googleusercontent.com/aida-public/AB6AXuA7IjHfQ6ul1qlSikDrVtEBJTpNqhwHU_tIuatj3ZOIzIUy-Y0dPcB-J04x5OhHT6-z8Pyr8zcpDAb8n4kQSmhHT2vRQYXTOkaSQfj8sO2y1_chzD-qokWLrBv3br9Tqc1_pEjxZwRVt0f4_Nsc6NOyy_NwbCPOqUWbyIgpotn1Q0NY0_aNw2thA5yRbCnx2I6dWgmHqIMsiRxp9fyy8Q6VnayJDG_GrQIyIRMcJ_BpNcOvS6Oo2JZtp2zVkkUIOdzteIILQKUMrZw-'
+                            'https://lh3.googleusercontent.com/aida-public/AB6AXuA7IjHfQ6ul1qlSikDrVtEBJTpNqhwHU_tIuatj3ZOIzIUy-Y0dPcB-J04x5OhHT6-z8Pyr8zcpDAb8n4kQSmhHT2vRQYXTOkaSQfj8sO2y1_chzD-qokWLrBv3br9Tqc1_pEjxZwRVt0f4_Nsc6NOyy_NwbCPOqUWbyIgpotn1Q0NY0_aNw2thA5yRbCnx2I6dWgmHqIMsiRxp9fyy8Q6VnayJDG_GrQIyIRMcJ_BpNcOvS6Oo2JZtp2zVkkUIOdzteIILQKUMrZw-',
                           ),
                           fit: BoxFit.cover,
                         ),
@@ -95,7 +109,9 @@ class DonateScreen extends StatelessWidget {
                                   end: Alignment.bottomCenter,
                                   colors: [
                                     Colors.transparent,
-                                    AppColors.background.withValues(alpha: 0.85),
+                                    AppColors.background.withValues(
+                                      alpha: 0.85,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -109,13 +125,19 @@ class DonateScreen extends StatelessWidget {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.primary.withValues(alpha: 0.30),
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.30,
+                                    ),
                                     blurRadius: 22,
                                     offset: const Offset(0, 10),
                                   ),
                                 ],
                               ),
-                              child: const Icon(Icons.favorite, color: Colors.white, size: 40),
+                              child: const Icon(
+                                Icons.favorite,
+                                color: Colors.white,
+                                size: 40,
+                              ),
                             ),
                           ),
                         ],
@@ -134,7 +156,10 @@ class DonateScreen extends StatelessWidget {
                         const Text(
                           'Tu apoyo hace la diferencia',
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
+                          ),
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -156,7 +181,11 @@ class DonateScreen extends StatelessWidget {
                           subtitle: 'Donación instantánea segura',
                           onTap: () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Link/checkout PayPal pendiente de configurar.')),
+                              const SnackBar(
+                                content: Text(
+                                  'Link/checkout PayPal pendiente de configurar.',
+                                ),
+                              ),
                             );
                           },
                         ),
@@ -169,7 +198,11 @@ class DonateScreen extends StatelessWidget {
                           subtitle: 'Red TRC20 / BEP20',
                           onTap: () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Dirección/QR Binance pendiente de configurar.')),
+                              const SnackBar(
+                                content: Text(
+                                  'Dirección/QR Binance pendiente de configurar.',
+                                ),
+                              ),
                             );
                           },
                         ),
@@ -180,7 +213,12 @@ class DonateScreen extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: AppColors.primary.withValues(alpha: 0.10),
                             borderRadius: BorderRadius.circular(14),
-                            border: Border(left: BorderSide(color: AppColors.primary, width: 4)),
+                            border: Border(
+                              left: BorderSide(
+                                color: AppColors.primary,
+                                width: 4,
+                              ),
+                            ),
                           ),
                           child: Text(
                             '"Este es un proyecto comunitario. Cada aporte se destina íntegramente a costos de infraestructura y desarrollo de nuevas funcionalidades."',
@@ -209,7 +247,11 @@ class DonateScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
                 decoration: BoxDecoration(
                   color: AppColors.background,
-                  border: Border(top: BorderSide(color: AppColors.primary.withValues(alpha: 0.20))),
+                  border: Border(
+                    top: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.20),
+                    ),
+                  ),
                 ),
                 child: SafeArea(
                   top: false,
@@ -222,9 +264,17 @@ class DonateScreen extends StatelessWidget {
                         foregroundColor: Colors.white,
                         elevation: 10,
                         shadowColor: AppColors.primary.withValues(alpha: 0.25),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
-                      child: const Text('Volver al Inicio', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900)),
+                      child: const Text(
+                        'Volver al Inicio',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -282,17 +332,31 @@ class _DonateMethodTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900)),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.65))),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white.withValues(alpha: 0.65),
+                    ),
+                  ),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: Colors.white.withValues(alpha: 0.35)),
+            Icon(
+              Icons.chevron_right,
+              color: Colors.white.withValues(alpha: 0.35),
+            ),
           ],
         ),
       ),
     );
   }
 }
-
