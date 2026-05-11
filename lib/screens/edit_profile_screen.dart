@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../services/user_profile_service.dart';
 import '../theme.dart';
+import '../widgets/vihtal_app_bar.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -241,7 +242,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: VihtalAppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).maybePop(),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.primary),
+          tooltip: 'Volver',
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Container(
+              width: 44,
+              height: 44,
+              decoration: const BoxDecoration(
+                color: Color(0xFFF3D9DC),
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.favorite_border_rounded, color: AppColors.primary),
+                tooltip: 'Favoritos',
+              ),
+            ),
+          ),
+        ],
+      ),
       body: SafeArea(
+        top: false,
         child: _loading
             ? const Center(child: CircularProgressIndicator())
             : SingleChildScrollView(
@@ -249,39 +276,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () => Navigator.of(context).maybePop(),
-                          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.primary),
-                          tooltip: 'Volver',
-                        ),
-                        const SizedBox(width: 6),
-                        const Expanded(
-                          child: Text(
-                            'Editar Perfil',
-                            style: TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 28,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: 44,
-                          height: 44,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFF3D9DC),
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.favorite_border_rounded, color: AppColors.primary),
-                            tooltip: 'Favoritos',
-                          ),
-                        ),
-                      ],
-                    ),
                     const SizedBox(height: 18),
                     Center(
                       child: Column(
