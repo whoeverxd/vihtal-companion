@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import '../widgets/vihtal_app_bar.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Inicio',
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+    return Scaffold(
+      appBar: const VihtalAppBar(),
+      body: const Center(
+        child: Text(
+          'Inicio',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+        ),
       ),
     );
   }

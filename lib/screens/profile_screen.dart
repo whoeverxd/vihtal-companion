@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../router/app_router.dart';
+import '../theme.dart';
+import '../widgets/vihtal_app_bar.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -9,39 +11,9 @@ class ProfileScreen extends StatelessWidget {
   static const _pageBg = Color(0xFFF8F3F4);
   static const _title = Color(0xFF221619);
   static const _body = Color(0xFF4A3438);
-  static const _muted = Color(0xFFB7A9AB);
   static const _cardSoft = Color(0xFFF3E8EA);
   static const _accent = Color(0xFFD5001A);
   static const _darkCard = Color(0xFF3B272B);
-
-  Widget _header() {
-    return Row(
-      children: [
-        const Icon(Icons.favorite_border_rounded, color: _accent, size: 28),
-        const SizedBox(width: 8),
-        const Text(
-          'VIHTAL',
-          style: TextStyle(
-            color: _accent,
-            fontSize: 34,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.2,
-          ),
-        ),
-        const Spacer(),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.notifications_none_rounded, color: _body),
-          tooltip: 'Notificaciones',
-        ),
-        const CircleAvatar(
-          radius: 20,
-          backgroundColor: Color(0xFF2F1F22),
-          child: Icon(Icons.person, color: Colors.white),
-        ),
-      ],
-    );
-  }
 
   Widget _profileHero() {
     return Column(
@@ -242,127 +214,147 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: _pageBg,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _header(),
-            const SizedBox(height: 26),
-            Center(child: _profileHero()),
-            const SizedBox(height: 24),
-            _personalInfoTile(context),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                const Text(
-                  'Coleccion de Insignias',
-                  style: TextStyle(
-                    color: _title,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF2CDD2),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: const Text(
-                    '6/12',
-                    style: TextStyle(color: _accent, fontSize: 14, fontWeight: FontWeight.w800),
-                  ),
-                ),
-              ],
+    return Scaffold(
+      backgroundColor: _pageBg,
+      appBar: VihtalAppBar(
+        backgroundColor: _pageBg,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.notifications_none_rounded, color: _body),
+            tooltip: 'Notificaciones',
+          ),
+          const Padding(
+            padding: EdgeInsets.only(right: 8),
+            child: CircleAvatar(
+              radius: 18,
+              backgroundColor: Color(0xFF2F1F22),
+              child: Icon(Icons.person, color: Colors.white),
             ),
-            const SizedBox(height: 14),
-            Wrap(
-              spacing: 12,
-              runSpacing: 20,
-              children: [
-                _badgeItem(name: 'CORAZON DE\nHIERRO', icon: Icons.favorite_border_rounded, unlocked: true),
-                _badgeItem(name: 'METAMORFOSIS', icon: Icons.eco_outlined, unlocked: true),
-                _badgeItem(name: 'PUNTUALIDAD', icon: Icons.verified_outlined, unlocked: true),
-                _badgeItem(name: 'INVENCIBLE', icon: Icons.shield_outlined, unlocked: false),
-                _badgeItem(name: 'GUARDIAN', icon: Icons.self_improvement_outlined, unlocked: false),
-                _badgeItem(name: 'ZEN MASTER', icon: Icons.spa_outlined, unlocked: false),
-              ],
-            ),
-            const SizedBox(height: 26),
-            const Text(
-              'Desafios Semanales',
-              style: TextStyle(color: _title, fontSize: 24, fontWeight: FontWeight.w800),
-            ),
-            const SizedBox(height: 14),
-            _challengeCard(
-              active: true,
-              title: 'Sin omisiones',
-              subtitle: 'Toma tu medicacion a tiempo durante 7 dias.',
-              progress: '5/7',
-            ),
-            const SizedBox(height: 12),
-            _challengeCard(
-              active: false,
-              title: 'Paseo Diario',
-              subtitle: 'Camina 20 min al dia por 5 dias seguidos.',
-            ),
-            const SizedBox(height: 20),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
-              decoration: BoxDecoration(
-                color: _darkCard,
-                borderRadius: BorderRadius.circular(32),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.20),
-                    blurRadius: 14,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+        ],
+      ),
+      body: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 18),
+              Center(child: _profileHero()),
+              const SizedBox(height: 24),
+              _personalInfoTile(context),
+              const SizedBox(height: 24),
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.auto_awesome_rounded, color: Color(0xFFF0C5C8), size: 18),
-                      SizedBox(width: 8),
-                      Text(
-                        'MOTIVACION',
-                        style: TextStyle(
-                          color: Color(0xFFF0C5C8),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    '"Cada pequeno paso cuenta para\ntu bienestar total."',
+                  const Text(
+                    'Coleccion de Insignias',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: _title,
                       fontSize: 24,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.w700,
-                      height: 1.2,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Sigue asi, estas a 3 dias de tu proximo nivel.',
-                    style: TextStyle(color: Color(0xFFF5DEE0), fontSize: 14),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF2CDD2),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: const Text(
+                      '6/12',
+                      style: TextStyle(color: _accent, fontSize: 14, fontWeight: FontWeight.w800),
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 12,
+                runSpacing: 20,
+                children: [
+                  _badgeItem(name: 'CORAZON DE\nHIERRO', icon: Icons.favorite_border_rounded, unlocked: true),
+                  _badgeItem(name: 'METAMORFOSIS', icon: Icons.eco_outlined, unlocked: true),
+                  _badgeItem(name: 'PUNTUALIDAD', icon: Icons.verified_outlined, unlocked: true),
+                  _badgeItem(name: 'INVENCIBLE', icon: Icons.shield_outlined, unlocked: false),
+                  _badgeItem(name: 'GUARDIAN', icon: Icons.self_improvement_outlined, unlocked: false),
+                  _badgeItem(name: 'ZEN MASTER', icon: Icons.spa_outlined, unlocked: false),
+                ],
+              ),
+              const SizedBox(height: 26),
+              const Text(
+                'Desafios Semanales',
+                style: TextStyle(color: _title, fontSize: 24, fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 14),
+              _challengeCard(
+                active: true,
+                title: 'Sin omisiones',
+                subtitle: 'Toma tu medicacion a tiempo durante 7 dias.',
+                progress: '5/7',
+              ),
+              const SizedBox(height: 12),
+              _challengeCard(
+                active: false,
+                title: 'Paseo Diario',
+                subtitle: 'Camina 20 min al dia por 5 dias seguidos.',
+              ),
+              const SizedBox(height: 20),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
+                decoration: BoxDecoration(
+                  color: _darkCard,
+                  borderRadius: BorderRadius.circular(32),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.20),
+                      blurRadius: 14,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.auto_awesome_rounded, color: Color(0xFFF0C5C8), size: 18),
+                        SizedBox(width: 8),
+                        Text(
+                          'MOTIVACION',
+                          style: TextStyle(
+                            color: Color(0xFFF0C5C8),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      '"Cada pequeno paso cuenta para\ntu bienestar total."',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w700,
+                        height: 1.2,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Sigue asi, estas a 3 dias de tu proximo nivel.',
+                      style: TextStyle(color: Color(0xFFF5DEE0), fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

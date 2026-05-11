@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../router/app_router.dart';
 import '../theme.dart';
 
 class VihtalAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -8,17 +10,29 @@ class VihtalAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.leading,
     this.actions,
     this.backgroundColor,
+    this.showDonateAction = true,
   });
 
   final Widget? leading;
   final List<Widget>? actions;
   final Color? backgroundColor;
+  final bool showDonateAction;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
+    final effectiveActions = <Widget>[
+      if (actions != null) ...actions!,
+      if (showDonateAction)
+        IconButton(
+          onPressed: () => context.push(AppRoutes.donate),
+          icon: const Icon(Icons.favorite_border_rounded, color: AppColors.primary),
+          tooltip: 'Donar',
+        ),
+    ];
+
     return AppBar(
       backgroundColor: backgroundColor ?? AppColors.background,
       elevation: 0,
@@ -30,8 +44,7 @@ class VihtalAppBar extends StatelessWidget implements PreferredSizeWidget {
         height: 28,
         fit: BoxFit.contain,
       ),
-      actions: actions,
+      actions: effectiveActions.isEmpty ? null : effectiveActions,
     );
   }
 }
-

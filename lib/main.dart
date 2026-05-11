@@ -13,7 +13,10 @@ Future<void> main() async {
 
   try {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    await configureFirebaseEmulatorsIfLocalhost();
+    await configureFirebaseEmulatorsIfLocalhost(
+      enableStorageEmulator: true,
+      enableAuthEmulator: false,
+    );
   } catch (e, st) {
     // En tests/u otros entornos, a veces Firebase no está configurado.
     // Pero en ejecución real queremos ver el error.
