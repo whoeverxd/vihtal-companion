@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../router/app_router.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -82,30 +85,34 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _personalInfoTile() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: _cardSoft,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: const Color(0xFFEBD7DA)),
-      ),
-      child: const Row(
-        children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: Color(0xFFF0CDD1),
-            child: Icon(Icons.person_outline_rounded, color: _accent),
-          ),
-          SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              'Informacion Personal',
-              style: TextStyle(color: _title, fontSize: 18, fontWeight: FontWeight.w700),
+  Widget _personalInfoTile(BuildContext context) {
+    return InkWell(
+      onTap: () => context.push(AppRoutes.editProfile),
+      borderRadius: BorderRadius.circular(999),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: _cardSoft,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: const Color(0xFFEBD7DA)),
+        ),
+        child: const Row(
+          children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: Color(0xFFF0CDD1),
+              child: Icon(Icons.person_outline_rounded, color: _accent),
             ),
-          ),
-          Icon(Icons.chevron_right_rounded, color: Color(0xFF8A7478), size: 30),
-        ],
+            SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                'Informacion Personal',
+                style: TextStyle(color: _title, fontSize: 18, fontWeight: FontWeight.w700),
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: Color(0xFF8A7478), size: 30),
+          ],
+        ),
       ),
     );
   }
@@ -246,7 +253,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 26),
             Center(child: _profileHero()),
             const SizedBox(height: 24),
-            _personalInfoTile(),
+            _personalInfoTile(context),
             const SizedBox(height: 24),
             Row(
               children: [
@@ -361,4 +368,3 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
-

@@ -13,6 +13,7 @@ import '../screens/splash_screen.dart';
 import '../screens/forgot_password_screen.dart';
 import '../screens/support_screen.dart';
 import '../screens/donate_screen.dart';
+import '../screens/edit_profile_screen.dart';
 import '../services/auth_service.dart';
 import '../theme.dart';
 import '../widgets/vihtal_bottom_navigation_bar.dart';
@@ -25,6 +26,7 @@ class AppRoutes {
   static const String ai = '/ai';
   static const String health = '/health';
   static const String profile = '/profile';
+  static const String editProfile = '/profile/edit';
   static const String forgotPassword = '/forgot-password';
   static const String support = '/support';
   static const String donate = '/donate';
@@ -141,6 +143,10 @@ GoRouter createAppRouter(AuthService authService) {
             builder: (BuildContext context, GoRouterState state) => const ProfileScreen(),
           ),
         ],
+      ),
+      GoRoute(
+        path: AppRoutes.editProfile,
+        builder: (BuildContext context, GoRouterState state) => const EditProfileScreen(),
       ),
       GoRoute(
         path: AppRoutes.forgotPassword,
