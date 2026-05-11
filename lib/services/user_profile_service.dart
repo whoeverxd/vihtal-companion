@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -79,6 +80,8 @@ class UserProfileService {
       throw StateError('No hay usuario autenticado');
     }
 
+    debugPrint('[Storage] user email=${user.email} isAnonymous=${user.isAnonymous}');
+
     final ref = _storage.ref().child('users/${user.uid}/profile.jpg');
 
     debugPrint('[Storage] bucket=${_storage.app.options.storageBucket} path=${ref.fullPath} uid=${user.uid}');
@@ -119,7 +122,13 @@ class UserProfileService {
       },
     );
 
-    await task;
+    try {
+      await task;
+    } on FirebaseException catch (e) {
+      debugPrint('[Storage] FirebaseException code=${e.code} message=${e.message}');
+      rethrow;
+    }
+
     final url = await ref.getDownloadURL();
 
     // Persistimos la URL sin tocar nombre/apellido.

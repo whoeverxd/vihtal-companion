@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'router/app_router.dart';
 import 'services/auth_service.dart';
+import 'services/firebase_emulators.dart';
 import 'theme.dart';
 
 Future<void> main() async {
@@ -12,7 +13,7 @@ Future<void> main() async {
 
   try {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    print(Firebase.app().options.projectId);
+    await configureFirebaseEmulatorsIfLocalhost();
   } catch (e, st) {
     // En tests/u otros entornos, a veces Firebase no está configurado.
     // Pero en ejecución real queremos ver el error.
