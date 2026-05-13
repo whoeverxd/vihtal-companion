@@ -61,6 +61,11 @@ class VihtalBottomNavigationBar extends StatelessWidget {
               label: 'Inicio',
             ),
             NavigationDestination(
+              icon: Icon(Icons.forum_outlined),
+              selectedIcon: Icon(Icons.forum_rounded),
+              label: 'Comunidad',
+            ),
+            NavigationDestination(
               icon: Icon(Icons.smart_toy_outlined),
               selectedIcon: Icon(Icons.smart_toy_rounded),
               label: 'IA',

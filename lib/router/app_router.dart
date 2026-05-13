@@ -14,6 +14,7 @@ import '../screens/forgot_password_screen.dart';
 import '../screens/support_screen.dart';
 import '../screens/donate_screen.dart';
 import '../screens/edit_profile_screen.dart';
+import '../screens/community_screen.dart';
 import '../services/auth_service.dart';
 import '../theme.dart';
 import '../widgets/vihtal_bottom_navigation_bar.dart';
@@ -30,6 +31,7 @@ class AppRoutes {
   static const String forgotPassword = '/forgot-password';
   static const String support = '/support';
   static const String donate = '/donate';
+  static const String community = '/community';
 }
 
 class AuthStateNotifier extends ChangeNotifier {
@@ -50,9 +52,10 @@ GoRouter createAppRouter(AuthService authService) {
   final authNotifier = AuthStateNotifier(authService.authStateChanges());
 
   int indexFromLocation(String location) {
-    if (location == AppRoutes.ai) return 1;
-    if (location == AppRoutes.health) return 2;
-    if (location == AppRoutes.profile) return 3;
+    if (location == AppRoutes.community) return 1;
+    if (location == AppRoutes.ai) return 2;
+    if (location == AppRoutes.health) return 3;
+    if (location == AppRoutes.profile) return 4;
     return 0;
   }
 
@@ -61,10 +64,12 @@ GoRouter createAppRouter(AuthService authService) {
       case 0:
         return AppRoutes.home;
       case 1:
-        return AppRoutes.ai;
+        return AppRoutes.community;
       case 2:
-        return AppRoutes.health;
+        return AppRoutes.ai;
       case 3:
+        return AppRoutes.health;
+      case 4:
         return AppRoutes.profile;
       default:
         return AppRoutes.home;
@@ -86,6 +91,7 @@ GoRouter createAppRouter(AuthService authService) {
       final isGoingToSplash = location == AppRoutes.splash;
       final isProtectedTab =
           location == AppRoutes.home ||
+          location == AppRoutes.community ||
           location == AppRoutes.ai ||
           location == AppRoutes.health ||
           location == AppRoutes.profile;
@@ -129,6 +135,10 @@ GoRouter createAppRouter(AuthService authService) {
           GoRoute(
             path: AppRoutes.home,
             builder: (BuildContext context, GoRouterState state) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.community,
+            builder: (BuildContext context, GoRouterState state) => const CommunityScreen(),
           ),
           GoRoute(
             path: AppRoutes.ai,
