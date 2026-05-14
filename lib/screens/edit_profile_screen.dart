@@ -2,7 +2,9 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../router/app_router.dart';
 import '../services/user_profile_service.dart';
 import '../theme.dart';
 import '../widgets/vihtal_app_bar.dart';
@@ -244,28 +246,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       backgroundColor: AppColors.background,
       appBar: VihtalAppBar(
         leading: IconButton(
-          onPressed: () => Navigator.of(context).maybePop(),
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.primary),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.profile);
+            }
+          },
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: AppColors.primary,
+          ),
           tooltip: 'Volver',
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: Container(
-              width: 44,
-              height: 44,
-              decoration: const BoxDecoration(
-                color: Color(0xFFF3D9DC),
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.favorite_border_rounded, color: AppColors.primary),
-                tooltip: 'Favoritos',
-              ),
-            ),
-          ),
-        ],
+        showDonateAction: false,
       ),
       body: SafeArea(
         top: false,

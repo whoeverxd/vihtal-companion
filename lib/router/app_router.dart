@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../screens/home_screen.dart';
+import '../screens/community_screen.dart';
 import '../screens/ai_screen.dart';
 import '../screens/health_screen.dart';
 import '../screens/login_screen.dart';
@@ -14,7 +15,11 @@ import '../screens/forgot_password_screen.dart';
 import '../screens/support_screen.dart';
 import '../screens/donate_screen.dart';
 import '../screens/edit_profile_screen.dart';
+<<<<<<< Updated upstream
 import '../screens/community_screen.dart';
+=======
+import '../screens/create_post_screen.dart';
+>>>>>>> Stashed changes
 import '../services/auth_service.dart';
 import '../theme.dart';
 import '../widgets/vihtal_bottom_navigation_bar.dart';
@@ -24,10 +29,12 @@ class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
   static const String home = '/home';
+  static const String community = '/comunidad';
   static const String ai = '/ai';
   static const String health = '/health';
   static const String profile = '/profile';
   static const String editProfile = '/profile/edit';
+  static const String createPost = '/comunidad/nuevo-post';
   static const String forgotPassword = '/forgot-password';
   static const String support = '/support';
   static const String donate = '/donate';
@@ -92,6 +99,10 @@ GoRouter createAppRouter(AuthService authService) {
       final isProtectedTab =
           location == AppRoutes.home ||
           location == AppRoutes.community ||
+<<<<<<< Updated upstream
+=======
+          location == AppRoutes.createPost ||
+>>>>>>> Stashed changes
           location == AppRoutes.ai ||
           location == AppRoutes.health ||
           location == AppRoutes.profile;
@@ -157,6 +168,10 @@ GoRouter createAppRouter(AuthService authService) {
       GoRoute(
         path: AppRoutes.editProfile,
         builder: (BuildContext context, GoRouterState state) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.createPost,
+        builder: (BuildContext context, GoRouterState state) => const CreatePostScreen(),
       ),
       GoRoute(
         path: AppRoutes.forgotPassword,

@@ -60,6 +60,11 @@ class VihtalBottomNavigationBar extends StatelessWidget {
               selectedIcon: Icon(Icons.home_rounded),
               label: 'Inicio',
             ),
+              NavigationDestination(
+                icon: Icon(Icons.groups_2_outlined),
+                selectedIcon: Icon(Icons.groups_2_rounded),
+                label: 'Comunidad',
+              ),
             NavigationDestination(
               icon: Icon(Icons.forum_outlined),
               selectedIcon: Icon(Icons.forum_rounded),
