@@ -15,11 +15,10 @@ import '../screens/forgot_password_screen.dart';
 import '../screens/support_screen.dart';
 import '../screens/donate_screen.dart';
 import '../screens/edit_profile_screen.dart';
-<<<<<<< Updated upstream
 import '../screens/community_screen.dart';
-=======
+
 import '../screens/create_post_screen.dart';
->>>>>>> Stashed changes
+
 import '../services/auth_service.dart';
 import '../theme.dart';
 import '../widgets/vihtal_bottom_navigation_bar.dart';
@@ -38,7 +37,7 @@ class AppRoutes {
   static const String forgotPassword = '/forgot-password';
   static const String support = '/support';
   static const String donate = '/donate';
-  static const String community = '/community';
+
 }
 
 class AuthStateNotifier extends ChangeNotifier {
@@ -99,10 +98,9 @@ GoRouter createAppRouter(AuthService authService) {
       final isProtectedTab =
           location == AppRoutes.home ||
           location == AppRoutes.community ||
-<<<<<<< Updated upstream
-=======
+
           location == AppRoutes.createPost ||
->>>>>>> Stashed changes
+
           location == AppRoutes.ai ||
           location == AppRoutes.health ||
           location == AppRoutes.profile;

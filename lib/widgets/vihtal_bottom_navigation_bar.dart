@@ -65,11 +65,7 @@ class VihtalBottomNavigationBar extends StatelessWidget {
                 selectedIcon: Icon(Icons.groups_2_rounded),
                 label: 'Comunidad',
               ),
-            NavigationDestination(
-              icon: Icon(Icons.forum_outlined),
-              selectedIcon: Icon(Icons.forum_rounded),
-              label: 'Comunidad',
-            ),
+
             NavigationDestination(
               icon: Icon(Icons.smart_toy_outlined),
               selectedIcon: Icon(Icons.smart_toy_rounded),
@@ -87,6 +83,7 @@ class VihtalBottomNavigationBar extends StatelessWidget {
             ),
           ],
         ),
+
       ),
     );
   }

@@ -1,21 +1,9 @@
 import 'package:flutter/material.dart';
-<<<<<<< Updated upstream
+
 
 import '../widgets/vihtal_app_bar.dart';
 
-class CommunityScreen extends StatelessWidget {
-  const CommunityScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      appBar: VihtalAppBar(),
-      body: Center(
-        child: Text(
-          'Comunidad',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-        ),
-=======
 import 'package:go_router/go_router.dart';
 
 import '../router/app_router.dart';
@@ -367,18 +355,16 @@ class _CommunityScreenState extends State<CommunityScreen> {
             ),
           ),
         ],
->>>>>>> Stashed changes
+
       ),
     );
   }
 }
 
-<<<<<<< Updated upstream
-=======
+
 class _CommunityCategory {
   const _CommunityCategory({required this.key, required this.label});
 
   final String key;
   final String label;
 }
->>>>>>> Stashed changes
