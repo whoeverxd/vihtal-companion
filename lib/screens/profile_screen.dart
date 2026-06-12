@@ -214,6 +214,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 label: 'Información personal',
                 onTap: () => context.push(AppRoutes.editProfile),
               ),
+              const SizedBox(height: 12),
+              _ProfileTile(
+                icon: Icons.settings_outlined,
+                label: 'Ajustes',
+                onTap: () => context.push(AppRoutes.settings),
+              ),
               const SizedBox(height: 24),
               SizedBox(
                 height: 54,

@@ -63,4 +63,12 @@ class AuthService {
     }
     return auth.signOut();
   }
+
+  /// Elimina la cuenta del usuario actual. Puede lanzar
+  /// `requires-recent-login` si la sesión es antigua (hay que volver a entrar).
+  Future<void> deleteAccount() async {
+    final user = _auth?.currentUser;
+    if (user == null) return;
+    await user.delete();
+  }
 }

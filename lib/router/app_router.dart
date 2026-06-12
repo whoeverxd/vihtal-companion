@@ -19,6 +19,8 @@ import '../screens/centers_screen.dart';
 import '../screens/article_screen.dart';
 import '../screens/post_detail_screen.dart';
 import '../screens/premium_screen.dart';
+import '../screens/onboarding_screen.dart';
+import '../screens/settings_screen.dart';
 
 import '../screens/create_post_screen.dart';
 
@@ -47,6 +49,8 @@ class AppRoutes {
   static const String article = '/educacion/articulo';
   static const String postDetail = '/comunidad/post';
   static const String premium = '/premium';
+  static const String onboarding = '/onboarding';
+  static const String settings = '/ajustes';
 
 }
 
@@ -211,6 +215,16 @@ GoRouter createAppRouter(AuthService authService) {
         path: AppRoutes.premium,
         builder: (BuildContext context, GoRouterState state) =>
             const PremiumScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.onboarding,
+        builder: (BuildContext context, GoRouterState state) =>
+            const OnboardingScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settings,
+        builder: (BuildContext context, GoRouterState state) =>
+            const SettingsScreen(),
       ),
     ],
   );

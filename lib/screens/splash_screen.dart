@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../router/app_router.dart';
+import '../services/app_prefs.dart';
 import '../theme.dart';
 import '../widgets/brand_logo.dart';
 
@@ -37,7 +38,11 @@ class SplashScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () => context.go(AppRoutes.login),
+                  onPressed: () async {
+                    final done = await AppPrefs().isOnboardingDone();
+                    if (!context.mounted) return;
+                    context.go(done ? AppRoutes.login : AppRoutes.onboarding);
+                  },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
