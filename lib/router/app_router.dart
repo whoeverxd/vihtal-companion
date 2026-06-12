@@ -16,8 +16,11 @@ import '../screens/support_screen.dart';
 import '../screens/donate_screen.dart';
 import '../screens/edit_profile_screen.dart';
 import '../screens/centers_screen.dart';
+import '../screens/article_screen.dart';
 
 import '../screens/create_post_screen.dart';
+
+import '../models/education_content.dart';
 
 import '../services/auth_service.dart';
 import '../theme.dart';
@@ -38,6 +41,7 @@ class AppRoutes {
   static const String support = '/support';
   static const String donate = '/donate';
   static const String centers = '/centros';
+  static const String article = '/educacion/articulo';
 
 }
 
@@ -187,6 +191,11 @@ GoRouter createAppRouter(AuthService authService) {
       GoRoute(
         path: AppRoutes.centers,
         builder: (BuildContext context, GoRouterState state) => const CentersScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.article,
+        builder: (BuildContext context, GoRouterState state) =>
+            ArticleScreen(topic: state.extra as EduTopic),
       ),
     ],
   );
