@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/health_center.dart';
 import '../theme.dart';
@@ -108,9 +109,8 @@ class _CentersScreenState extends State<CentersScreen> {
                   center: c,
                   selected: c.id == _selectedId,
                   onTap: () => _select(c),
-                  onCall: () => _snack(context, 'Llamando a ${c.name} (demo).'),
-                  onDirections: () =>
-                      _snack(context, 'Abriendo ruta a ${c.name} (demo).'),
+                  onCall: () => _callCenter(context, c),
+                  onDirections: () => _openDirections(context, c),
                 );
               },
             ),
@@ -343,4 +343,25 @@ void _snack(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
   );
+}
+
+/// Abre el marcador del teléfono con el número del centro.
+Future<void> _callCenter(BuildContext context, HealthCenter center) async {
+  final uri = Uri(scheme: 'tel', path: center.phone.replaceAll(' ', ''));
+  if (!await launchUrl(uri) && context.mounted) {
+    _snack(context, 'No se pudo abrir el marcador.');
+  }
+}
+
+/// Abre la app de mapas externa con la ubicación del centro.
+Future<void> _openDirections(BuildContext context, HealthCenter center) async {
+  final lat = center.location.latitude;
+  final lng = center.location.longitude;
+  final uri = Uri.parse(
+    'https://www.google.com/maps/search/?api=1&query=$lat,$lng',
+  );
+  if (!await launchUrl(uri, mode: LaunchMode.externalApplication) &&
+      context.mounted) {
+    _snack(context, 'No se pudo abrir el mapa.');
+  }
 }
