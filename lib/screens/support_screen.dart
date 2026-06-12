@@ -87,12 +87,12 @@ class SupportScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 14),
-                        Text(
+                        const Text(
                           'Tu apoyo nos ayuda a mantener y mejorar VIHTAL Companion.\n\nPuedes contribuir con una donación o apoyarnos compartiendo la app.',
                           style: TextStyle(
                             fontSize: 16,
                             height: 1.55,
-                            color: Colors.white.withValues(alpha: 0.65),
+                            color: AppColors.textSecondary,
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -212,14 +212,12 @@ class _SupportCard extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
-    this.cta,
     required this.onPressed,
   });
 
   final IconData icon;
   final String title;
   final String subtitle;
-  final String? cta;
   final VoidCallback onPressed;
 
   @override
@@ -230,9 +228,9 @@ class _SupportCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.03),
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.primary.withValues(alpha: 0.12)),
+          border: Border.all(color: AppColors.border),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,28 +259,18 @@ class _SupportCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.65),
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
                       fontSize: 12,
                       height: 1.35,
                     ),
                   ),
-                  if (cta != null) ...[
-                    const SizedBox(height: 10),
-                    Text(
-                      cta!,
-                      style: TextStyle(
-                        color: AppColors.primary.withValues(alpha: 0.95),
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),
-            Icon(
+            const Icon(
               Icons.chevron_right,
-              color: Colors.white.withValues(alpha: 0.35),
+              color: AppColors.textSecondary,
             ),
           ],
         ),

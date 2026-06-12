@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-
-import '../widgets/vihtal_app_bar.dart';
-
-
 import 'package:go_router/go_router.dart';
 
 import '../router/app_router.dart';

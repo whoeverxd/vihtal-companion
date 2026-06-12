@@ -31,16 +31,43 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Future<void> _onSubmit() async {
-    // Vista: por ahora sólo validamos. El envío lo podemos conectar a AuthService si quieres.
+    // Vista: por ahora sólo validamos. El envío se conectará a AuthService.
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     final messenger = ScaffoldMessenger.of(context);
     messenger.clearSnackBars();
     messenger.showSnackBar(
       const SnackBar(
-        content: Text(
-          'Envío de instrucciones pendiente de conectar a Firebase.',
-        ),
+        content: Text('Envío de instrucciones pendiente de conectar a Firebase.'),
+      ),
+    );
+  }
+
+  InputDecoration _fieldDecoration({
+    required String hint,
+    required IconData icon,
+  }) {
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(color: AppColors.border),
+    );
+
+    return InputDecoration(
+      hintText: hint,
+      filled: true,
+      fillColor: AppColors.surface,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 15),
+      prefixIcon: Icon(icon, color: AppColors.textSecondary, size: 20),
+      enabledBorder: border,
+      focusedBorder: border.copyWith(
+        borderSide: const BorderSide(color: AppColors.primary, width: 1.4),
+      ),
+      errorBorder: border.copyWith(
+        borderSide: const BorderSide(color: AppColors.primary),
+      ),
+      focusedErrorBorder: border.copyWith(
+        borderSide: const BorderSide(color: AppColors.primary, width: 1.4),
       ),
     );
   }
@@ -62,185 +89,112 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Header
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     child: Row(
                       children: [
                         InkWell(
                           onTap: _goBack,
                           borderRadius: BorderRadius.circular(999),
                           child: Container(
-                            width: 48,
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.10),
+                            width: 44,
+                            height: 44,
+                            decoration: const BoxDecoration(
+                              color: AppColors.surfaceSoft,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(
-                              Icons.arrow_back,
-                              color: AppColors.primary,
-                            ),
+                            child: const Icon(Icons.arrow_back,
+                                color: AppColors.primary, size: 20),
                           ),
                         ),
                         const Spacer(),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [BrandLogo(width: 118)],
-                        ),
+                        const BrandLogo(width: 110),
                         const Spacer(),
-                        const SizedBox(width: 48, height: 48),
+                        const SizedBox(width: 44, height: 44),
                       ],
                     ),
                   ),
-
-                  // Content
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 22),
-                        const Text(
-                          'Recuperar Contraseña',
-                          style: TextStyle(
-                            fontSize: 34,
-                            fontWeight: FontWeight.w900,
-                            height: 1.1,
-                            letterSpacing: -0.4,
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                        Text(
-                          'Introduce tu correo electrónico registrado para\nrecibir un código de restablecimiento de\ncontraseña.',
-                          style: TextStyle(
-                            fontSize: 16,
-                            height: 1.55,
-                            color: Colors.white.withValues(alpha: 0.65),
-                          ),
-                        ),
-                        const SizedBox(height: 30),
-
+                        const SizedBox(height: 24),
                         Center(
                           child: Container(
-                            width: 92,
-                            height: 92,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.07),
+                            width: 84,
+                            height: 84,
+                            decoration: const BoxDecoration(
+                              color: AppColors.surfaceSoft,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(
-                              Icons.lock_reset,
-                              color: AppColors.primary,
-                              size: 44,
-                            ),
+                            child: const Icon(Icons.lock_reset_rounded,
+                                color: AppColors.primary, size: 40),
                           ),
                         ),
-
-                        const SizedBox(height: 32),
-
+                        const SizedBox(height: 24),
+                        Text(
+                          'Recuperar contraseña',
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Introduce tu correo electrónico registrado para recibir '
+                          'las instrucciones de restablecimiento.',
+                          style: TextStyle(
+                            fontSize: 15,
+                            height: 1.45,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 28),
                         const Text(
                           'Correo electrónico',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 14,
                             fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         Form(
                           key: _formKey,
                           child: TextFormField(
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
                             autofillHints: const [AutofillHints.email],
-                            style: const TextStyle(fontSize: 16),
+                            style: const TextStyle(
+                                fontSize: 15, color: AppColors.textPrimary),
                             validator: (value) {
                               final v = (value ?? '').trim();
                               if (v.isEmpty) return 'Introduce tu correo.';
-                              final ok = RegExp(
-                                r'^[^@]+@[^@]+\\.[^@]+$',
-                              ).hasMatch(v);
+                              final ok =
+                                  RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(v);
                               if (!ok) return 'Correo inválido.';
                               return null;
                             },
-                            decoration: InputDecoration(
-                              hintText: 'ejemplo@correo.com',
-                              prefixIcon: Icon(
-                                Icons.mail,
-                                color: Colors.white.withValues(alpha: 0.45),
-                              ),
-                              filled: true,
-                              fillColor: Colors.white.withValues(alpha: 0.03),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 18,
-                                vertical: 18,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(28),
-                                borderSide: BorderSide(
-                                  color: AppColors.primary.withValues(
-                                    alpha: 0.25,
-                                  ),
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(28),
-                                borderSide: BorderSide(
-                                  color: AppColors.primary.withValues(
-                                    alpha: 0.25,
-                                  ),
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(28),
-                                borderSide: const BorderSide(
-                                  color: AppColors.primary,
-                                  width: 1.4,
-                                ),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(28),
-                                borderSide: const BorderSide(
-                                  color: Colors.redAccent,
-                                ),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(28),
-                                borderSide: const BorderSide(
-                                  color: Colors.redAccent,
-                                ),
-                              ),
+                            decoration: _fieldDecoration(
+                              hint: 'ejemplo@correo.com',
+                              icon: Icons.mail_outline_rounded,
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 20),
-
                         SizedBox(
-                          height: 56,
+                          height: 54,
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: _onSubmit,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(34),
-                              ),
-                              elevation: 10,
-                              shadowColor: AppColors.primary.withValues(
-                                alpha: 0.35,
+                                borderRadius: BorderRadius.circular(14),
                               ),
                             ),
                             child: const Text(
-                              'Enviar Instrucciones',
+                              'Enviar instrucciones',
                               style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 0.2,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                           ),
@@ -248,45 +202,26 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ],
                     ),
                   ),
-
                   const Spacer(),
-
-                  // Bottom link
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 24,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     child: TextButton(
                       onPressed: () => context.go(AppRoutes.login),
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.primary,
                         textStyle: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.login, size: 18),
-                          SizedBox(width: 10),
-                          Text('Volver al Inicio de Sesión'),
+                          Icon(Icons.login_rounded, size: 18),
+                          SizedBox(width: 8),
+                          Text('Volver al inicio de sesión'),
                         ],
-                      ),
-                    ),
-                  ),
-
-                  // Decorative handle
-                  Center(
-                    child: Container(
-                      width: 120,
-                      height: 5,
-                      margin: const EdgeInsets.only(bottom: 10),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.18),
-                        borderRadius: BorderRadius.circular(999),
                       ),
                     ),
                   ),
