@@ -15,7 +15,7 @@ import '../screens/forgot_password_screen.dart';
 import '../screens/support_screen.dart';
 import '../screens/donate_screen.dart';
 import '../screens/edit_profile_screen.dart';
-import '../screens/community_screen.dart';
+import '../screens/centers_screen.dart';
 
 import '../screens/create_post_screen.dart';
 
@@ -37,6 +37,7 @@ class AppRoutes {
   static const String forgotPassword = '/forgot-password';
   static const String support = '/support';
   static const String donate = '/donate';
+  static const String centers = '/centros';
 
 }
 
@@ -182,6 +183,10 @@ GoRouter createAppRouter(AuthService authService) {
       GoRoute(
         path: AppRoutes.donate,
         builder: (BuildContext context, GoRouterState state) => const DonateScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.centers,
+        builder: (BuildContext context, GoRouterState state) => const CentersScreen(),
       ),
     ],
   );

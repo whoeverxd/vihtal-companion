@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../router/app_router.dart';
 import '../theme.dart';
 import '../widgets/vihtal_app_bar.dart';
 
@@ -34,6 +36,54 @@ class HealthScreen extends StatelessWidget {
           const _AppointmentCard(),
           const SizedBox(height: 14),
           const _SymptomLogCard(),
+          const SizedBox(height: 14),
+          const _CentersEntryCard(),
+        ],
+      ),
+    );
+  }
+}
+
+/// Acceso al directorio de centros de salud cercanos (mapa).
+class _CentersEntryCard extends StatelessWidget {
+  const _CentersEntryCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return _Card(
+      onTap: () => context.push(AppRoutes.centers),
+      child: Row(
+        children: [
+          Container(
+            width: 46,
+            height: 46,
+            decoration: const BoxDecoration(
+              color: AppColors.surfaceSoft,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.map_rounded, color: AppColors.primary),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  'Centros de salud cercanos',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  'Encuentra pruebas, tratamiento y apoyo en el mapa',
+                  style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
         ],
       ),
     );

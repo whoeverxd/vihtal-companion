@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Requerido para red: tiles del mapa (OpenStreetMap) y Firebase. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="vihtal_companion"
         android:name="${applicationName}"
