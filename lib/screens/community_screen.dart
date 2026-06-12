@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:go_router/go_router.dart';
 
 import '../router/app_router.dart';
@@ -19,8 +18,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   static const _categories = <_CommunityCategory>[
     _CommunityCategory(key: 'todos', label: 'Todos'),
-    _CommunityCategory(key: 'recien_diagnosticados', label: 'Recién Diagnosticados'),
-    _CommunityCategory(key: 'apoyo_emocional', label: 'Apoyo Emocional'),
+    _CommunityCategory(key: 'recien_diagnosticados', label: 'Recién diagnosticados'),
+    _CommunityCategory(key: 'apoyo_emocional', label: 'Apoyo emocional'),
     _CommunityCategory(key: 'tratamientos', label: 'Tratamientos'),
   ];
 
@@ -28,6 +27,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
   void initState() {
     super.initState();
     Future.microtask(_forumService.ensureSeedData);
+  }
+
+  List<ForumPost> _applyFilter(List<ForumPost> posts) {
+    if (_selectedCategory == 'todos') return posts;
+    return posts.where((post) => post.categoryKey == _selectedCategory).toList();
   }
 
   Widget _topActions(BuildContext context) {
@@ -39,66 +43,44 @@ class _CommunityScreenState extends State<CommunityScreen> {
           tooltip: 'Donar',
         ),
         const Spacer(),
-        Stack(
-          clipBehavior: Clip.none,
-          children: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.notifications_none_rounded,
-                color: AppColors.textSecondary,
-              ),
-              tooltip: 'Notificaciones',
-            ),
-            Positioned(
-              right: 6,
-              top: 6,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: const Text(
-                  '0',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-          ],
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.notifications_none_rounded,
+              color: AppColors.textSecondary),
+          tooltip: 'Notificaciones',
         ),
       ],
     );
   }
 
-  List<ForumPost> _applyFilter(List<ForumPost> posts) {
-    if (_selectedCategory == 'todos') return posts;
-    return posts.where((post) => post.categoryKey == _selectedCategory).toList();
-  }
-
   Widget _categoryChip(_CommunityCategory category, bool selected) {
-    return ChoiceChip(
-      label: Text(category.label),
-      selected: selected,
-      onSelected: (_) => setState(() => _selectedCategory = category.key),
-      labelStyle: TextStyle(
-        color: selected ? Colors.white : AppColors.textPrimary,
-        fontWeight: FontWeight.w700,
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: ChoiceChip(
+        label: Text(category.label),
+        selected: selected,
+        onSelected: (_) => setState(() => _selectedCategory = category.key),
+        labelStyle: TextStyle(
+          color: selected ? Colors.white : AppColors.textSecondary,
+          fontWeight: FontWeight.w600,
+          fontSize: 13,
+        ),
+        selectedColor: AppColors.primary,
+        backgroundColor: AppColors.surface,
+        showCheckmark: false,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(999),
+          side: BorderSide(
+            color: selected ? AppColors.primary : AppColors.border,
+          ),
+        ),
       ),
-      selectedColor: AppColors.primary,
-      backgroundColor: AppColors.surfaceSoft,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
-      side: BorderSide.none,
     );
   }
 
   Widget _forumCard(ForumPost post) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Material(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
@@ -106,7 +88,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
           borderRadius: BorderRadius.circular(20),
           onTap: () => context.push(AppRoutes.postDetail, extra: post),
           child: Container(
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: AppColors.border),
@@ -138,7 +120,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                       post.timeAgo,
                       style: const TextStyle(
                         color: AppColors.textSecondary,
-                        fontSize: 13,
+                        fontSize: 12.5,
                       ),
                     ),
                   ],
@@ -148,19 +130,19 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   post.title,
                   style: const TextStyle(
                     color: AppColors.textPrimary,
-                    fontSize: 18,
-                    height: 1.18,
-                    fontWeight: FontWeight.w800,
+                    fontSize: 16,
+                    height: 1.25,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Text(
                   post.excerpt,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: AppColors.textSecondary,
-                    fontSize: 14,
+                    fontSize: 13.5,
                     height: 1.4,
                   ),
                 ),
@@ -168,7 +150,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 Row(
                   children: [
                     const Icon(Icons.mode_comment_outlined,
-                        size: 17, color: AppColors.textSecondary),
+                        size: 16, color: AppColors.textSecondary),
                     const SizedBox(width: 6),
                     Text(
                       '${post.repliesCount}',
@@ -180,7 +162,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     ),
                     const SizedBox(width: 18),
                     const Icon(Icons.favorite_border_rounded,
-                        size: 17, color: AppColors.textSecondary),
+                        size: 16, color: AppColors.textSecondary),
                     const SizedBox(width: 6),
                     Text(
                       '${post.likesCount}',
@@ -203,18 +185,14 @@ class _CommunityScreenState extends State<CommunityScreen> {
     );
   }
 
-  void _newPostSheet(BuildContext context) {
-    context.push(AppRoutes.createPost);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 8),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _topActions(context),
-          const SizedBox(height: 10),
           Expanded(
             child: Stack(
               children: [
@@ -227,113 +205,36 @@ class _CommunityScreenState extends State<CommunityScreen> {
                       onRefresh: _forumService.ensureSeedData,
                       child: ListView(
                         physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.only(bottom: 110),
+                        padding: const EdgeInsets.only(bottom: 100),
                         children: [
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(18),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(34),
-                            ),
-                            child: Stack(
-                              children: [
-                                Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: Icon(
-                                    Icons.shield_rounded,
-                                    size: 120,
-                                    color: Colors.white.withValues(alpha: 0.08),
-                                  ),
-                                ),
-                                const Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(Icons.lock_outline_rounded, color: Colors.white, size: 24),
-                                        SizedBox(width: 10),
-                                        Text(
-                                          'Espacio 100% Anónimo',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.w800,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 14),
-                                    Text(
-                                      'Tu identidad está protegida. Participa en la\ncomunidad con total libertad y seguridad.',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        height: 1.45,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                          Text(
+                            'Comunidad',
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
-                          const SizedBox(height: 24),
-                          const Text(
-                            'Explorar Categorías',
-                            style: TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          const SizedBox(height: 14),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
+                          const SizedBox(height: 12),
+                          const _AnonymityBanner(),
+                          const SizedBox(height: 22),
+                          // Filtros de categoría
+                          SizedBox(
+                            height: 38,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              physics: const BouncingScrollPhysics(),
                               children: _categories
-                                  .map(
-                                    (category) => Padding(
-                                      padding: const EdgeInsets.only(right: 12),
-                                      child: _categoryChip(
-                                        category,
-                                        _selectedCategory == category.key,
-                                      ),
-                                    ),
-                                  )
+                                  .map((c) => _categoryChip(
+                                      c, _selectedCategory == c.key))
                                   .toList(),
                             ),
                           ),
-                          const SizedBox(height: 24),
-                          Row(
-                            children: [
-                              const Expanded(
-                                child: Text(
-                                  'Discusiones Recientes',
-                                  style: TextStyle(
-                                    color: AppColors.textPrimary,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {},
-                                style: TextButton.styleFrom(
-                                  foregroundColor: AppColors.primary,
-                                ),
-                                child: const Text(
-                                  'Ver más →',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          const SizedBox(height: 20),
+                          Text(
+                            'Discusiones recientes',
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 12),
-                          if (snapshot.connectionState == ConnectionState.waiting && posts.isEmpty)
+                          if (snapshot.connectionState ==
+                                  ConnectionState.waiting &&
+                              posts.isEmpty)
                             const Padding(
                               padding: EdgeInsets.all(24),
                               child: Center(child: CircularProgressIndicator()),
@@ -344,7 +245,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                               child: Center(
                                 child: Text(
                                   'Aún no hay publicaciones.',
-                                  style: TextStyle(color: AppColors.textSecondary),
+                                  style:
+                                      TextStyle(color: AppColors.textSecondary),
                                 ),
                               ),
                             )
@@ -356,12 +258,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   },
                 ),
                 Positioned(
-                  right: 8,
-                  bottom: 18,
+                  right: 0,
+                  bottom: 12,
                   child: FloatingActionButton(
-                    onPressed: () => _newPostSheet(context),
+                    onPressed: () => context.push(AppRoutes.createPost),
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
+                    elevation: 2,
                     child: const Icon(Icons.add_comment_rounded),
                   ),
                 ),
@@ -369,12 +272,52 @@ class _CommunityScreenState extends State<CommunityScreen> {
             ),
           ),
         ],
-
       ),
     );
   }
 }
 
+/// Franja discreta que recuerda que el espacio es anónimo y seguro.
+class _AnonymityBanner extends StatelessWidget {
+  const _AnonymityBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceSoft,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: const BoxDecoration(
+              color: AppColors.surface,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.lock_outline_rounded,
+                color: AppColors.primary, size: 18),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Text(
+              'Espacio 100% anónimo. Tu identidad está protegida.',
+              style: TextStyle(
+                color: AppColors.accent,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                height: 1.3,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class _CommunityCategory {
   const _CommunityCategory({required this.key, required this.label});
