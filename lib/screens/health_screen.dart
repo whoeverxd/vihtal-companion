@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../router/app_router.dart';
+import '../services/premium_service.dart';
 import '../theme.dart';
 import '../widgets/vihtal_app_bar.dart';
 
@@ -29,6 +30,7 @@ class HealthScreen extends StatelessWidget {
             style: TextStyle(color: AppColors.textSecondary, height: 1.35),
           ),
           const SizedBox(height: 20),
+          const _PremiumUpsellBanner(),
           const _NextDoseCard(),
           const SizedBox(height: 14),
           const _AdherenceCard(),
@@ -368,6 +370,70 @@ class _SymptomLogCard extends StatelessWidget {
 // -----------------------------------------------------------------------------
 // Helpers de UI compartidos en esta pantalla.
 // -----------------------------------------------------------------------------
+
+/// Banner que invita a Premium; se oculta si el usuario ya es premium.
+class _PremiumUpsellBanner extends StatelessWidget {
+  const _PremiumUpsellBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<bool>(
+      stream: PremiumService().watchIsPremium(),
+      builder: (context, snapshot) {
+        final isPremium = snapshot.data ?? false;
+        if (isPremium) return const SizedBox.shrink();
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 14),
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(18),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(18),
+              onTap: () => context.push(AppRoutes.premium),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [AppColors.primary, AppColors.primaryDark],
+                  ),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.workspace_premium_rounded,
+                        color: Colors.white, size: 26),
+                    const SizedBox(width: 14),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Adherencia con Premium',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 15,
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            'Guarda dosis, citas y síntomas de verdad',
+                            style: TextStyle(color: Colors.white70, fontSize: 13),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.chevron_right_rounded, color: Colors.white),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
 
 class _Card extends StatelessWidget {
   const _Card({required this.child, this.onTap});

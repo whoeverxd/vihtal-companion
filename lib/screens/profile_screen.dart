@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../router/app_router.dart';
 import '../services/auth_service.dart';
+import '../services/premium_service.dart';
 import '../services/user_profile_service.dart';
 import '../theme.dart';
 
@@ -16,6 +17,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final _profileService = UserProfileService();
   final _authService = AuthService();
+  final _premiumService = PremiumService();
 
   bool _loading = true;
   String? _error;
@@ -128,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final data = _data;
 
     return ColoredBox(
-      color: const Color(0xFFF8F3F4),
+      color: AppColors.background,
       child: RefreshIndicator(
         onRefresh: _loadProfile,
         child: ListView(
@@ -167,7 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Center(
                 child: CircleAvatar(
                   radius: 54,
-                  backgroundColor: const Color(0xFFF0CDD1),
+                  backgroundColor: AppColors.surfaceSoft,
                   backgroundImage: (data.photoUrl != null && data.photoUrl!.isNotEmpty)
                       ? NetworkImage(data.photoUrl!)
                       : null,
@@ -175,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ? const Icon(
                           Icons.person_rounded,
                           size: 56,
-                          color: AppColors.accent,
+                          color: AppColors.primary,
                         )
                       : null,
                 ),
@@ -200,59 +202,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              InkWell(
-                onTap: () => context.push(AppRoutes.editProfile),
-                borderRadius: BorderRadius.circular(999),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF3E8EA),
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: const Color(0xFFEBD7DA)),
-                  ),
-                  child: const Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundColor: Color(0xFFF0CDD1),
-                        child: Icon(
-                          Icons.person_outline_rounded,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      SizedBox(width: 14),
-                      Expanded(
-                        child: Text(
-                          'Informacion personal',
-                          style: TextStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                      Icon(
-                        Icons.chevron_right_rounded,
-                        color: Color(0xFF8A7478),
-                        size: 30,
-                      ),
-                    ],
-                  ),
-                ),
+              StreamBuilder<bool>(
+                stream: _premiumService.watchIsPremium(),
+                builder: (context, snapshot) {
+                  return _PlanCard(isPremium: snapshot.data ?? false);
+                },
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 12),
+              _ProfileTile(
+                icon: Icons.person_outline_rounded,
+                label: 'Información personal',
+                onTap: () => context.push(AppRoutes.editProfile),
+              ),
+              const SizedBox(height: 24),
               SizedBox(
                 height: 54,
-                child: ElevatedButton.icon(
+                child: OutlinedButton.icon(
                   onPressed: _logout,
                   icon: const Icon(Icons.logout_rounded),
                   label: const Text(
-                    'Cerrar sesion',
+                    'Cerrar sesión',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.primary,
+                    side: const BorderSide(color: AppColors.border),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
@@ -277,4 +251,136 @@ class _ProfileViewData {
   final String name;
   final String email;
   final String? photoUrl;
+}
+
+/// Tarjeta de plan actual (Gratis / Premium) con acceso a la pantalla Premium.
+class _PlanCard extends StatelessWidget {
+  const _PlanCard({required this.isPremium});
+
+  final bool isPremium;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: () => context.push(AppRoutes.premium),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: isPremium
+                ? const LinearGradient(
+                    colors: [AppColors.primary, AppColors.primaryDark],
+                  )
+                : null,
+            color: isPremium ? null : AppColors.surface,
+            borderRadius: BorderRadius.circular(18),
+            border: isPremium ? null : Border.all(color: AppColors.border),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.workspace_premium_rounded,
+                color: isPremium ? Colors.white : AppColors.primary,
+                size: 28,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isPremium ? 'VIHTAL Premium' : 'Plan Gratis',
+                      style: TextStyle(
+                        color:
+                            isPremium ? Colors.white : AppColors.textPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      isPremium
+                          ? 'Tienes todas las funciones activas'
+                          : 'Hazte Premium para más funciones',
+                      style: TextStyle(
+                        color: isPremium
+                            ? Colors.white70
+                            : AppColors.textSecondary,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: isPremium ? Colors.white : AppColors.textSecondary,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Fila genérica de opción del perfil.
+class _ProfileTile extends StatelessWidget {
+  const _ProfileTile({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: const BoxDecoration(
+                  color: AppColors.surfaceSoft,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: AppColors.primary),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded,
+                  color: AppColors.textSecondary),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

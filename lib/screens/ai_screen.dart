@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../models/chat_message.dart';
+import '../router/app_router.dart';
 import '../services/ai_chat_service.dart';
+import '../services/premium_service.dart';
 import '../theme.dart';
 import '../widgets/vihtal_app_bar.dart';
 
@@ -13,9 +16,10 @@ import '../widgets/vihtal_app_bar.dart';
 /// Cuando se conecte la Cloud Function, solo cambia el servicio; esta UI queda
 /// igual (sigue consumiendo un `Stream<String>` de chunks).
 class AiScreen extends StatefulWidget {
-  const AiScreen({super.key, this.service});
+  const AiScreen({super.key, this.service, this.premiumService});
 
   final AiChatService? service;
+  final PremiumService? premiumService;
 
   @override
   State<AiScreen> createState() => _AiScreenState();
@@ -23,13 +27,17 @@ class AiScreen extends StatefulWidget {
 
 class _AiScreenState extends State<AiScreen> {
   late final AiChatService _service = widget.service ?? AiChatService();
+  late final PremiumService _premiumService =
+      widget.premiumService ?? PremiumService();
 
   final List<ChatMessage> _messages = <ChatMessage>[];
   final TextEditingController _inputController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
   StreamSubscription<String>? _replySub;
+  StreamSubscription<bool>? _premiumSub;
   bool _isResponding = false;
+  bool _isPremium = false;
   int _messagesSentToday = 0;
 
   static const List<String> _suggestions = <String>[
@@ -38,11 +46,22 @@ class _AiScreenState extends State<AiScreen> {
     'Dudas sobre mi tratamiento',
   ];
 
-  bool get _limitReached => _messagesSentToday >= AiChatService.freeDailyLimit;
+  // Premium = chat ilimitado; gratis = límite diario.
+  bool get _limitReached =>
+      !_isPremium && _messagesSentToday >= AiChatService.freeDailyLimit;
+
+  @override
+  void initState() {
+    super.initState();
+    _premiumSub = _premiumService.watchIsPremium().listen((value) {
+      if (mounted) setState(() => _isPremium = value);
+    });
+  }
 
   @override
   void dispose() {
     _replySub?.cancel();
+    _premiumSub?.cancel();
     _inputController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -461,10 +480,20 @@ class _LimitBanner extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           const Text(
-            'Vuelve mañana o, próximamente, accede al plan premium para chat '
-            'ilimitado.',
+            'Vuelve mañana o hazte Premium para chat ilimitado.',
             textAlign: TextAlign.center,
             style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+          ),
+          const SizedBox(height: 12),
+          ElevatedButton.icon(
+            onPressed: () => context.push(AppRoutes.premium),
+            icon: const Icon(Icons.workspace_premium_rounded, size: 18),
+            label: const Text('Hazte Premium'),
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
           ),
         ],
       ),
