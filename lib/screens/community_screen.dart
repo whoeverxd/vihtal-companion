@@ -90,97 +90,115 @@ class _CommunityScreenState extends State<CommunityScreen> {
         fontWeight: FontWeight.w700,
       ),
       selectedColor: AppColors.primary,
-      backgroundColor: const Color(0xFFF5DDE0),
+      backgroundColor: AppColors.surfaceSoft,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
       side: BorderSide.none,
     );
   }
 
   Widget _forumCard(ForumPost post) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 18),
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF9E7EA),
-        borderRadius: BorderRadius.circular(28),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF1CDD1),
-                  borderRadius: BorderRadius.circular(999),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Material(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () => context.push(AppRoutes.postDetail, extra: post),
+          child: Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceSoft,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        post.categoryLabel.toUpperCase(),
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      post.timeAgo,
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
                 ),
-                child: Text(
-                  post.categoryLabel.toUpperCase(),
+                const SizedBox(height: 12),
+                Text(
+                  post.title,
                   style: const TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 11,
+                    color: AppColors.textPrimary,
+                    fontSize: 18,
+                    height: 1.18,
                     fontWeight: FontWeight.w800,
-                    letterSpacing: 0.8,
                   ),
                 ),
-              ),
-              const Spacer(),
-              Text(
-                post.timeAgo,
-                style: const TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 14,
+                const SizedBox(height: 8),
+                Text(
+                  post.excerpt,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Text(
-            post.title,
-            style: const TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 22,
-              height: 1.12,
-              fontWeight: FontWeight.w800,
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    const Icon(Icons.mode_comment_outlined,
+                        size: 17, color: AppColors.textSecondary),
+                    const SizedBox(width: 6),
+                    Text(
+                      '${post.repliesCount}',
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(width: 18),
+                    const Icon(Icons.favorite_border_rounded,
+                        size: 17, color: AppColors.textSecondary),
+                    const SizedBox(width: 6),
+                    Text(
+                      '${post.likesCount}',
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const Spacer(),
+                    const Icon(Icons.chevron_right_rounded,
+                        size: 20, color: AppColors.textSecondary),
+                  ],
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 12),
-          Text(
-            post.excerpt,
-            style: const TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 15,
-              height: 1.45,
-            ),
-          ),
-          const SizedBox(height: 18),
-          Row(
-            children: [
-              const Icon(Icons.mode_comment_outlined, size: 19, color: AppColors.textPrimary),
-              const SizedBox(width: 6),
-              Text(
-                '${post.repliesCount} respuestas',
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(width: 22),
-              const Icon(Icons.favorite_border_rounded, size: 19, color: AppColors.textPrimary),
-              const SizedBox(width: 6),
-              Text(
-                '${post.likesCount}',
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }

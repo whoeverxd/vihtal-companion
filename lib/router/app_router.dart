@@ -17,10 +17,12 @@ import '../screens/donate_screen.dart';
 import '../screens/edit_profile_screen.dart';
 import '../screens/centers_screen.dart';
 import '../screens/article_screen.dart';
+import '../screens/post_detail_screen.dart';
 
 import '../screens/create_post_screen.dart';
 
 import '../models/education_content.dart';
+import '../services/community_forum_service.dart';
 
 import '../services/auth_service.dart';
 import '../theme.dart';
@@ -42,6 +44,7 @@ class AppRoutes {
   static const String donate = '/donate';
   static const String centers = '/centros';
   static const String article = '/educacion/articulo';
+  static const String postDetail = '/comunidad/post';
 
 }
 
@@ -196,6 +199,11 @@ GoRouter createAppRouter(AuthService authService) {
         path: AppRoutes.article,
         builder: (BuildContext context, GoRouterState state) =>
             ArticleScreen(topic: state.extra as EduTopic),
+      ),
+      GoRoute(
+        path: AppRoutes.postDetail,
+        builder: (BuildContext context, GoRouterState state) =>
+            PostDetailScreen(post: state.extra as ForumPost),
       ),
     ],
   );

@@ -14,6 +14,10 @@ class ForumPost {
     required this.createdAt,
     required this.repliesCount,
     required this.likesCount,
+    this.authorName = 'Anónimo',
+    this.authorPhotoUrl,
+    this.isAnonymous = true,
+    this.imageUrl,
   });
 
   final String id;
@@ -24,9 +28,13 @@ class ForumPost {
   final DateTime createdAt;
   final int repliesCount;
   final int likesCount;
+  final String authorName;
+  final String? authorPhotoUrl;
+  final bool isAnonymous;
+  final String? imageUrl;
 
-  factory ForumPost.fromDoc(QueryDocumentSnapshot<Map<String, dynamic>> doc) {
-    final data = doc.data();
+  factory ForumPost.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data() ?? const <String, dynamic>{};
     final ts = data['createdAt'];
     final createdAt = ts is Timestamp ? ts.toDate() : DateTime.now();
 
@@ -39,6 +47,50 @@ class ForumPost {
       createdAt: createdAt,
       repliesCount: (data['repliesCount'] as num?)?.toInt() ?? 0,
       likesCount: (data['likesCount'] as num?)?.toInt() ?? 0,
+      authorName: (data['authorName'] as String?) ?? 'Anónimo',
+      authorPhotoUrl: data['authorPhotoUrl'] as String?,
+      isAnonymous: (data['isAnonymous'] as bool?) ?? true,
+      imageUrl: data['imageUrl'] as String?,
+    );
+  }
+
+  String get timeAgo {
+    final diff = DateTime.now().difference(createdAt);
+    if (diff.inMinutes < 60) return 'Hace ${diff.inMinutes.clamp(1, 59)} min';
+    if (diff.inHours < 24) return 'Hace ${diff.inHours} h';
+    return 'Hace ${diff.inDays} d';
+  }
+}
+
+class ForumReply {
+  const ForumReply({
+    required this.id,
+    required this.content,
+    required this.authorName,
+    required this.authorPhotoUrl,
+    required this.isAnonymous,
+    required this.createdAt,
+  });
+
+  final String id;
+  final String content;
+  final String authorName;
+  final String? authorPhotoUrl;
+  final bool isAnonymous;
+  final DateTime createdAt;
+
+  factory ForumReply.fromDoc(QueryDocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data();
+    final ts = data['createdAt'];
+    final createdAt = ts is Timestamp ? ts.toDate() : DateTime.now();
+
+    return ForumReply(
+      id: doc.id,
+      content: (data['content'] as String?) ?? '',
+      authorName: (data['authorName'] as String?) ?? 'Anónimo',
+      authorPhotoUrl: data['authorPhotoUrl'] as String?,
+      isAnonymous: (data['isAnonymous'] as bool?) ?? true,
+      createdAt: createdAt,
     );
   }
 
@@ -118,6 +170,95 @@ class CommunityForumService {
       'authorPhotoUrl': anonymous ? null : user?.photoURL,
       'imageUrl': imageUrl,
       'linkUrl': linkUrl,
+    });
+  }
+
+  /// Observa un post individual en vivo (para mantener contadores al día).
+  Stream<ForumPost?> watchPost(String postId) {
+    final posts = _postsCollection;
+    if (posts == null) return Stream<ForumPost?>.value(null);
+    return posts.doc(postId).snapshots().map(
+          (doc) => doc.exists ? ForumPost.fromDoc(doc) : null,
+        );
+  }
+
+  /// Observa las respuestas de un post (más antiguas primero).
+  Stream<List<ForumReply>> watchReplies(String postId) {
+    final posts = _postsCollection;
+    if (posts == null) return Stream<List<ForumReply>>.value(const []);
+    return posts
+        .doc(postId)
+        .collection('replies')
+        .orderBy('createdAt')
+        .snapshots()
+        .map((snap) => snap.docs.map(ForumReply.fromDoc).toList());
+  }
+
+  /// Añade una respuesta e incrementa el contador del post de forma atómica.
+  Future<void> addReply({
+    required String postId,
+    required String content,
+    required bool anonymous,
+  }) async {
+    final posts = _postsCollection;
+    final firestore = _firestore;
+    if (posts == null || firestore == null) {
+      throw StateError('FirebaseFirestore no está disponible.');
+    }
+
+    final user = _auth?.currentUser;
+    final postRef = posts.doc(postId);
+    final replyRef = postRef.collection('replies').doc();
+
+    final batch = firestore.batch();
+    batch.set(replyRef, <String, dynamic>{
+      'content': content.trim(),
+      'createdAt': FieldValue.serverTimestamp(),
+      'isAnonymous': anonymous,
+      'authorId': anonymous ? null : user?.uid,
+      'authorName': anonymous ? 'Anónimo' : (user?.displayName ?? 'Usuario'),
+      'authorPhotoUrl': anonymous ? null : user?.photoURL,
+    });
+    batch.update(postRef, <String, dynamic>{
+      'repliesCount': FieldValue.increment(1),
+    });
+    await batch.commit();
+  }
+
+  /// Indica si el usuario actual ya dio like a este post.
+  Stream<bool> watchLikeState(String postId) {
+    final posts = _postsCollection;
+    final uid = _auth?.currentUser?.uid;
+    if (posts == null || uid == null) return Stream<bool>.value(false);
+    return posts
+        .doc(postId)
+        .collection('likes')
+        .doc(uid)
+        .snapshots()
+        .map((doc) => doc.exists);
+  }
+
+  /// Da o quita like (toggle) de forma atómica, sin duplicar.
+  Future<void> toggleLike(String postId) async {
+    final posts = _postsCollection;
+    final firestore = _firestore;
+    final uid = _auth?.currentUser?.uid;
+    if (posts == null || firestore == null || uid == null) {
+      throw StateError('No se pudo registrar el like.');
+    }
+
+    final postRef = posts.doc(postId);
+    final likeRef = postRef.collection('likes').doc(uid);
+
+    await firestore.runTransaction((tx) async {
+      final likeSnap = await tx.get(likeRef);
+      if (likeSnap.exists) {
+        tx.delete(likeRef);
+        tx.update(postRef, {'likesCount': FieldValue.increment(-1)});
+      } else {
+        tx.set(likeRef, {'createdAt': FieldValue.serverTimestamp()});
+        tx.update(postRef, {'likesCount': FieldValue.increment(1)});
+      }
     });
   }
 
