@@ -191,6 +191,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     Widget? suffixIcon,
     String? helperText,
   }) {
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(color: AppColors.border),
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -199,35 +204,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           style: const TextStyle(
             color: AppColors.textPrimary,
             fontSize: 14,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1.2,
+            fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 8),
         TextField(
           controller: controller,
           enabled: enabled,
           style: TextStyle(
             color: enabled ? AppColors.textPrimary : AppColors.textSecondary,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
+            fontSize: 15,
           ),
           decoration: InputDecoration(
             filled: true,
-            fillColor: enabled
-                ? AppColors.surfaceSoft.withValues(alpha: 0.55)
-                : AppColors.surfaceSoft.withValues(alpha: 0.40),
+            fillColor: enabled ? AppColors.surface : AppColors.background,
             hintStyle: const TextStyle(color: AppColors.textSecondary),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(999),
-              borderSide: BorderSide.none,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            enabledBorder: border,
+            border: border,
+            focusedBorder: border.copyWith(
+              borderSide: const BorderSide(color: AppColors.primary, width: 1.4),
             ),
+            disabledBorder: border,
             suffixIcon: suffixIcon,
           ),
         ),
         if (helperText != null) ...[
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
             helperText,
             style: const TextStyle(
@@ -281,14 +285,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               clipBehavior: Clip.none,
                               children: [
                                 Container(
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
-                                    gradient: RadialGradient(
-                                      colors: [
-                                        const Color(0xFFF1C7C2),
-                                        const Color(0xFFE9B0A8).withValues(alpha: 0.75),
-                                      ],
-                                    ),
+                                    color: AppColors.surfaceSoft,
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(10),
@@ -305,14 +304,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             Image.network(
                                               _photoUrl!,
                                               fit: BoxFit.cover,
-                                              errorBuilder: (_, __, ___) {
+                                              errorBuilder: (_, _, _) {
                                                 return const ColoredBox(
-                                                  color: Color(0xFFEAB7AE),
+                                                  color: AppColors.surfaceSoft,
                                                   child: Center(
                                                     child: Icon(
                                                       Icons.person_rounded,
                                                       size: 64,
-                                                      color: AppColors.accent,
+                                                      color: AppColors.primary,
                                                     ),
                                                   ),
                                                 );
@@ -320,12 +319,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             )
                                           else
                                             const ColoredBox(
-                                              color: Color(0xFFEAB7AE),
+                                              color: AppColors.surfaceSoft,
                                               child: Center(
                                                 child: Icon(
                                                   Icons.person_rounded,
                                                   size: 64,
-                                                  color: AppColors.accent,
+                                                  color: AppColors.primary,
                                                 ),
                                               ),
                                             ),
@@ -372,8 +371,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             'Cambiar foto de perfil',
                             style: TextStyle(
                               color: AppColors.primary,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                         ],
@@ -394,15 +393,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const SizedBox(height: 26),
                     SizedBox(
                       width: double.infinity,
-                      height: 62,
+                      height: 54,
                       child: ElevatedButton(
                         onPressed: _saving ? null : _save,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                          elevation: 8,
-                          shadowColor: Colors.black.withValues(alpha: 0.20),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14)),
                         ),
                         child: _saving
                             ? const SizedBox(
@@ -411,21 +407,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                               )
                             : const Text(
-                                'Guardar Cambios',
-                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                                'Guardar cambios',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                               ),
                       ),
                     ),
                     const SizedBox(height: 24),
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.fromLTRB(18, 20, 18, 20),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppColors.surfaceSoft.withValues(alpha: 0.65),
-                        borderRadius: BorderRadius.circular(28),
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: AppColors.border),
                       ),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Expanded(
                             child: Column(
@@ -435,24 +432,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   '¿Necesitas ayuda?',
                                   style: TextStyle(
                                     color: AppColors.textPrimary,
-                                    fontSize: 20,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w800,
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                SizedBox(height: 6),
                                 Text(
-                                  'Si tienes problemas para actualizar\ntus datos, contacta a nuestro\nequipo de soporte.',
+                                  'Si tienes problemas para actualizar tus datos, contacta a nuestro equipo de soporte.',
                                   style: TextStyle(
                                     color: AppColors.textSecondary,
-                                    fontSize: 14,
-                                    height: 1.35,
+                                    fontSize: 13,
+                                    height: 1.4,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(width: 10),
-                          Icon(Icons.support_agent_rounded, color: AppColors.subtle, size: 54),
+                          const SizedBox(width: 12),
+                          const Icon(Icons.support_agent_rounded,
+                              color: AppColors.primary, size: 32),
                         ],
                       ),
                     ),

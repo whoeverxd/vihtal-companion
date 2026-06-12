@@ -62,8 +62,8 @@ class DonateScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.textPrimary,
-                      fontSize: 34,
-                      fontWeight: FontWeight.w900,
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
                       letterSpacing: -0.4,
                     ),
                   ),
@@ -123,9 +123,9 @@ class DonateScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceSoft.withValues(alpha: 0.55),
+                      color: AppColors.surface,
                       borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: AppColors.subtle),
+                      border: Border.all(color: AppColors.border),
                     ),
                     child: const Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,20 +158,17 @@ class DonateScreen extends StatelessWidget {
                 child: SafeArea(
                   top: false,
                   child: SizedBox(
-                    height: 64,
+                    height: 54,
                     child: ElevatedButton.icon(
                       onPressed: () => context.go(AppRoutes.home),
                       icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
                       label: const Text(
                         'Volver al inicio',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        elevation: 10,
-                        shadowColor: AppColors.primary.withValues(alpha: 0.25),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
                       ),
                     ),
                   ),
@@ -206,9 +203,9 @@ class _DonateMethodCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.surfaceSoft.withValues(alpha: 0.35),
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppColors.subtle),
+          border: Border.all(color: AppColors.border),
         ),
         child: Row(
           children: [
@@ -222,7 +219,7 @@ class _DonateMethodCard extends StatelessWidget {
                     title,
                     style: const TextStyle(
                       color: AppColors.textPrimary,
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
