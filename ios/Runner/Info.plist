@@ -16,6 +16,8 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>vihtal_companion</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>VIHTAL usa tu ubicación para mostrarte centros de salud cercanos.</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

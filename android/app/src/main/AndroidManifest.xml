@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Requerido para red: tiles del mapa (OpenStreetMap) y Firebase. -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Ubicación para mostrar centros de salud cercanos. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
         android:label="vihtal_companion"
         android:name="${applicationName}"

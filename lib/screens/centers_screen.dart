@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/health_center.dart';
+import '../services/location_service.dart';
 import '../theme.dart';
 import '../widgets/vihtal_app_bar.dart';
 
-/// Directorio de centros de salud y laboratorios cercanos (sub-proyecto C).
-///
-/// MVP / placeholder: mapa real (flutter_map + OpenStreetMap, gratis y sin clave)
-/// con marcadores de centros simulados y una lista debajo. La ubicación real del
-/// usuario y los datos desde backend quedan como mejora posterior.
+/// Directorio de centros de salud con mapa real y ubicación del usuario.
 class CentersScreen extends StatefulWidget {
-  const CentersScreen({super.key});
+  const CentersScreen({super.key, this.locationService});
+
+  final LocationService? locationService;
 
   @override
   State<CentersScreen> createState() => _CentersScreenState();
@@ -20,14 +20,50 @@ class CentersScreen extends StatefulWidget {
 
 class _CentersScreenState extends State<CentersScreen> {
   final MapController _mapController = MapController();
-  final List<HealthCenter> _centers = HealthCenter.demoData;
+  late final LocationService _locationService =
+      widget.locationService ?? LocationService();
+
+  final List<HealthCenter> _centers = List.of(HealthCenter.demoData);
   String? _selectedId;
+
+  LatLng? _userLocation;
+  bool _locating = false;
+  String? _locError;
+
+  @override
+  void initState() {
+    super.initState();
+    _locate();
+  }
+
+  Future<void> _locate() async {
+    setState(() {
+      _locating = true;
+      _locError = null;
+    });
+    try {
+      final loc = await _locationService.getCurrentLocation();
+      _centers.sort((a, b) => _locationService
+          .distanceKm(loc, a.location)
+          .compareTo(_locationService.distanceKm(loc, b.location)));
+      if (!mounted) return;
+      setState(() => _userLocation = loc);
+      _mapController.move(loc, 13);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _locError = e.toString());
+    } finally {
+      if (mounted) setState(() => _locating = false);
+    }
+  }
+
+  double _distanceFor(HealthCenter c) => _userLocation != null
+      ? _locationService.distanceKm(_userLocation!, c.location)
+      : c.distanceKm;
 
   void _select(HealthCenter center, {bool moveMap = true}) {
     setState(() => _selectedId = center.id);
-    if (moveMap) {
-      _mapController.move(center.location, 15);
-    }
+    if (moveMap) _mapController.move(center.location, 15);
   }
 
   @override
@@ -36,7 +72,9 @@ class _CentersScreenState extends State<CentersScreen> {
       backgroundColor: AppColors.background,
       appBar: VihtalAppBar(
         showDonateAction: false,
-        leading: BackButton(color: AppColors.primary, onPressed: () => Navigator.of(context).maybePop()),
+        leading: BackButton(
+            color: AppColors.primary,
+            onPressed: () => Navigator.of(context).maybePop()),
       ),
       body: Column(
         children: [
@@ -47,7 +85,8 @@ class _CentersScreenState extends State<CentersScreen> {
                 FlutterMap(
                   mapController: _mapController,
                   options: MapOptions(
-                    initialCenter: HealthCenter.defaultMapCenter,
+                    initialCenter:
+                        _userLocation ?? HealthCenter.defaultMapCenter,
                     initialZoom: 13,
                     onTap: (_, _) => setState(() => _selectedId = null),
                   ),
@@ -70,6 +109,13 @@ class _CentersScreenState extends State<CentersScreen> {
                               onTap: () => _select(c, moveMap: false),
                             ),
                           ),
+                        if (_userLocation != null)
+                          Marker(
+                            point: _userLocation!,
+                            width: 24,
+                            height: 24,
+                            child: const _UserDot(),
+                          ),
                       ],
                     ),
                   ],
@@ -79,24 +125,22 @@ class _CentersScreenState extends State<CentersScreen> {
                   bottom: 12,
                   child: _AttributionChip(),
                 ),
+                if (_userLocation != null)
+                  Positioned(
+                    right: 12,
+                    bottom: 12,
+                    child: _RecenterButton(
+                      onTap: () => _mapController.move(_userLocation!, 14),
+                    ),
+                  ),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
-            child: Row(
-              children: [
-                Text(
-                  'Centros cercanos',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const Spacer(),
-                Text(
-                  '${_centers.length} resultados',
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
-              ],
-            ),
+          _LocationStatus(
+            locating: _locating,
+            error: _locError,
+            located: _userLocation != null,
+            onRetry: _locate,
           ),
           Expanded(
             child: ListView.separated(
@@ -107,6 +151,7 @@ class _CentersScreenState extends State<CentersScreen> {
                 final c = _centers[index];
                 return _CenterCard(
                   center: c,
+                  distanceKm: _distanceFor(c),
                   selected: c.id == _selectedId,
                   onTap: () => _select(c),
                   onCall: () => _callCenter(context, c),
@@ -116,6 +161,128 @@ class _CentersScreenState extends State<CentersScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _LocationStatus extends StatelessWidget {
+  const _LocationStatus({
+    required this.locating,
+    required this.error,
+    required this.located,
+    required this.onRetry,
+  });
+
+  final bool locating;
+  final String? error;
+  final bool located;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget content;
+    if (locating) {
+      content = Row(
+        children: const [
+          SizedBox(
+            width: 16,
+            height: 16,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+          SizedBox(width: 10),
+          Text('Buscando tu ubicación…',
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+        ],
+      );
+    } else if (error != null) {
+      content = Row(
+        children: [
+          const Icon(Icons.location_off_rounded,
+              size: 18, color: AppColors.textSecondary),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(error!,
+                style: const TextStyle(
+                    color: AppColors.textSecondary, fontSize: 12.5)),
+          ),
+          TextButton(
+            onPressed: onRetry,
+            style: TextButton.styleFrom(
+                foregroundColor: AppColors.primary,
+                visualDensity: VisualDensity.compact),
+            child: const Text('Reintentar'),
+          ),
+        ],
+      );
+    } else if (located) {
+      content = Row(
+        children: const [
+          Icon(Icons.near_me_rounded, size: 16, color: AppColors.primary),
+          SizedBox(width: 8),
+          Text('Ordenado por cercanía a ti',
+              style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600)),
+        ],
+      );
+    } else {
+      content = const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          Expanded(child: content),
+          Text('${_visibleCount(context)} centros',
+              style: Theme.of(context).textTheme.labelLarge),
+        ],
+      ),
+    );
+  }
+
+  int _visibleCount(BuildContext context) => HealthCenter.demoData.length;
+}
+
+class _UserDot extends StatelessWidget {
+  const _UserDot();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A73E8),
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 3),
+        boxShadow: const [
+          BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2)),
+        ],
+      ),
+    );
+  }
+}
+
+class _RecenterButton extends StatelessWidget {
+  const _RecenterButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.surface,
+      shape: const CircleBorder(),
+      elevation: 2,
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onTap,
+        child: const Padding(
+          padding: EdgeInsets.all(10),
+          child: Icon(Icons.my_location_rounded,
+              color: AppColors.primary, size: 22),
+        ),
       ),
     );
   }
@@ -165,6 +332,7 @@ class _AttributionChip extends StatelessWidget {
 class _CenterCard extends StatelessWidget {
   const _CenterCard({
     required this.center,
+    required this.distanceKm,
     required this.selected,
     required this.onTap,
     required this.onCall,
@@ -172,6 +340,7 @@ class _CenterCard extends StatelessWidget {
   });
 
   final HealthCenter center;
+  final double distanceKm;
   final bool selected;
   final VoidCallback onTap;
   final VoidCallback onCall;
@@ -190,7 +359,7 @@ class _CenterCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: selected ? AppColors.primary : AppColors.subtle,
+              color: selected ? AppColors.primary : AppColors.border,
               width: selected ? 1.5 : 1,
             ),
           ),
@@ -219,7 +388,8 @@ class _CenterCard extends StatelessWidget {
               const SizedBox(height: 3),
               _IconLine(
                 icon: Icons.schedule_outlined,
-                text: '${center.hours}  ·  ${center.distanceKm} km',
+                text:
+                    '${center.hours}  ·  ${distanceKm.toStringAsFixed(1)} km',
               ),
               const SizedBox(height: 10),
               Wrap(
@@ -239,7 +409,7 @@ class _CenterCard extends StatelessWidget {
                       label: const Text('Llamar'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.primary,
-                        side: const BorderSide(color: AppColors.subtle),
+                        side: const BorderSide(color: AppColors.border),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(999),
                         ),
@@ -301,7 +471,7 @@ class _ServiceChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.background,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.subtle),
+        border: Border.all(color: AppColors.border),
       ),
       child: Text(
         label,
